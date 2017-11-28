@@ -3,7 +3,7 @@
 \begin{document}
 
 %set the WP number or product here for the requirements
-\def\product{PROD}
+\def\product{LSST Level 2 System}
 
 \setDocCompact{true}
 
@@ -14,7 +14,7 @@
 \setDocDate     {\today}              % the date of the issue
 \setDocUpstreamLocation{\url{https://github.com/lsst/lsst-texmf/examples}}
 
-\author   {William O'Mullane}
+\author   {}
 
 % Comment out the setLSSTDU if you do not want it do not set it to Blanck
 
@@ -34,7 +34,7 @@ from test controls.}
 %
 
 \setDocChangeRecord{%
-\addtohist{1.0}{2017-11-10}{Initial version.} {W.~O'Mullane}
+\addtohist{1.0}{2017-11-30}{Initial version.} {}
 }
 
 
@@ -57,7 +57,7 @@ A summary of the software functionality,  software configuration , its  operatio
 \addtocounter{table}{-1}
 
 \begin{tabular}[htb]{l l}
-LDM-NNN & \product Testing Specification\\
+\citeds{LDM-534} & \product Testing Specification\\
 \citeds{LDM-503}& DM Test Plan\\
 \citeds{LDM-294}& LSST DM Project Management Plan\\
 \end{tabular}
@@ -112,9 +112,14 @@ The following table shall summarize, among others, the completion status of each
 % The table should follow this template for the traceability scripts retrieve the information correctly
 \begin{longtable} {|p{0.2\textwidth}|p{0.2\textwidth}|p{0.6\textwidth}|}\hline
 {\bf TEST CASE ID} & {\bf PASS/FAIL} & {\bf COMMENTS} \\\hline
-test case 1 & pass/fail & comment \\\hline
-test case 2 & pass/fail & comment \\\hline
-... & ... & ... \\\hline
+DRP-00-00 & pass/fail & comment \\\hline
+DRP-00-05 & pass/fail & comment \\\hline
+DRP-00-10 & pass/fail & comment \\\hline
+DRP-00-15 & pass/fail & comment \\\hline
+DRP-00-20 & pass/fail & comment \\\hline
+DRP-00-25 & pass/fail & comment \\\hline
+DRP-00-30 & pass/fail & comment \\\hline
+DRP-00-35 & pass/fail & comment \\\hline
 \end{longtable}
 
 
@@ -147,6 +152,15 @@ This section describes more in detail the results of those test cases that are f
 \subsubsection{Summary of test results}
 This paragraph shall summarize the results of the test. When the completion status of the test is not 'PASS', this section
 shall reference the following paragraphs for details.
+
+\paragraph{[DRP-00-05]}
+\begin{itemize}
+\item
+\begin{note}
+Data Facility to provide content.
+\end{note}
+\end{itemize}
+
 \subsubsection{Problems encountered}
 \paragraph{[TEST-CASE-ID]}
 This paragraph shall identify by their unique identification, the test cases in which one or more problems occurred, and shall provide:
@@ -158,6 +172,14 @@ This paragraph shall identify by their unique identification, the test cases in 
 \item Test steps where tests were resumed for retesting (if applicable)
 \end{itemize}
 
+\paragraph{[DRP-00-05]}
+\begin{itemize}
+\item
+\begin{note}
+Data Facility to provide content.
+\end{note}
+\end{itemize}
+
 \subsubsection{Deviations from test cases/procedures}
 \paragraph{[TEST-CASE-ID]}
 This paragraph shall identify by their unique identification, the test cases in which one or more deviations occured and shall provide:
@@ -165,6 +187,14 @@ This paragraph shall identify by their unique identification, the test cases in 
 \item A description of the deviation (e.g. substitution of any resource, procedural step not followed, scchedule deviation, etc)
 \item The rationale of the deviation
 \item An assessment of the deviation impact on the validity of the test case
+\end{itemize}
+
+\paragraph{[DRP-00-05]}
+\begin{itemize}
+\item
+\begin{note}
+Data Facility to provide content.
+\end{note}
 \end{itemize}
 
 \newpage
