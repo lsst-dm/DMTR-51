@@ -215,7 +215,13 @@ Basic data completeness and integratiry checks from LDM-534 4.2.8.3
   \begin{itemize}
     \item Table \ref{tab:count} listing all release data products per tract:  expected counts, actual counts, number with 0 filesizes for that datasetType
     \input{tableProductCounts}
-    \item Results of running truth checker per tract
+    \item To verify the physical location of files on the filesystem
+	  match the location information tracked in the archive
+	  database in the Data Backbone, we used the tool
+	  \texttt{compare{\_}db.py} from the \texttt{FileMgmt}
+	  package.  Paths, filesize, and md5sum were compared. The
+	  results were all equal for all 50656 files in tract=8766,
+	  52041 files in tract=8767, and 273375 files in tract=9813.
   \end{itemize}
   \item Check existence metadata
   \begin{itemize}
