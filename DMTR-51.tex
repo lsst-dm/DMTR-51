@@ -153,8 +153,29 @@ Operational concerns
   \item Missing handoff process from Pipelines to Operations.
   \item Generic issues
   \begin{itemize}
-    \item Difficulty to keep pipeline definition up to date
-    \item Using Butler
+    \item The workflow definition (wcl) is very fragile to any stack
+	  code changes. For example, in the current task framework,
+	  a config change can imply a change in the science workflow,
+	  so even a seemingly simple config change can make wcl
+	  outdated. With this caveat, long pipeline integration
+	  time is needed to run a version of pipelines through the
+	  processing framework. It is time-consuming to keep pipeline
+	  workflow definitions up to date with the Stack development.
+          No verification is done to ensure complete consistency.
+    \item The typical usage of Butler means all filenames are
+	  pre-determined in the Stack, which leads to the situation
+	  that filenames are not unique and conflicts with the DBB
+	  design. To customize the filenames, a Butler template
+	  file is made manaully to provide a customized Butler
+	  configuration file built for each processing attempt (via
+	  the \texttt{desdmfw{\_}lsst{\_}plugins} pacakge; DMTN-059).
+	  This manually-made Butler template needs to match the
+	  workflow definition (wcl). So far this is done manually
+	  and is very error-prone.  Better integration between the
+	  Butler interface and the processing framework will be helpful.
+    \item As our usage of Butler is not standard and well tested,
+	  it is fragile to any changes in Butler implementations
+	  and the integration time can be long.
     \item Inconsistent naming
     \item Storing metadata to database
   \end{itemize}
@@ -162,6 +183,7 @@ Operational concerns
   \begin{itemize}
     \item Uptime of cluster, problems with GPFS
     \item Storage space, compete with developer cluster use
+    \item Busy cluster (fix: special reservations/queue)
   \end{itemize}
   \item Missing overall processing strategy
   \item Issues specific to DESDM software
@@ -171,6 +193,10 @@ Operational concerns
     \item The cleanup of files that are no longer needed is manual and done by operator
   \end{itemize}
 \end{itemize}
+
+For LDM-503-2, some tests were carried out manually through spot checks.
+Improvements and development of tools to perform the checks will be helpful.
+
 
 \newpage
 
@@ -235,11 +261,22 @@ This paragraph shall identify by their unique identification, the test cases in 
 \end{itemize}
 
 \paragraph{[DRP-00-05]}
+
 \begin{itemize}
-  \item Hardware network problems (fix: replace current broken routers and purchased a hot spare)
-  \item Busy cluster (fix: special reservations/queue)
-  \item Filesystem full (fix: turned on purge of the scratch filesystem, purchasing production filesystems)
-  \item Commas in patch IDs (a known problem with a temporary fix, ref jira tickets)
+  \item During execution (LDM-534 \S 4.2.8.2), several processing
+	attempts failed due to unstable GPFS availability resulted
+	from hardware problems and network issues. We retried the
+	attempts after the transient problems were resolved, following
+	the Test Specifications.
+  \item The scratch filesystem, where the prototype DBB stores the
+	files, was close to full several times during test execution.
+	We had to manually purge files to ensure sufficient space
+	for the execution.
+  \item We needed to apply a patch on top of the Stack release to
+	workaround the issue that commas are part of the data IDs;
+	this has been a known problem as discussed in \jira{RFC-361}.
+	The fix has been agreed in RFC-365 for future implementation
+	in \jira{DM-11874}, \jira{DM-11875}, and \jira{DM-11876}.
 \begin{note}
 Data Facility to provide content.
 \end{note}
