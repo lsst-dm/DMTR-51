@@ -308,7 +308,6 @@ Basic data completeness and integratiry checks from LDM-534 4.2.8.3
   \item check the existence of the expected data
   \begin{itemize}
     \item Table \ref{tab:count} listing all release data products per tract:  expected counts, actual counts, number with 0 filesizes for that datasetType
-    \input{tableProductCounts}
     \item To verify the physical location of files on the filesystem
 	  match the location information tracked in the archive
 	  database in the Data Backbone, we used the tool
@@ -345,6 +344,10 @@ Basic data completeness and integratiry checks from LDM-534 4.2.8.3
 Data Facility to provide content.
 \end{note}
 \end{itemize}
+
+\input{tableProductCounts}
+\input{tableZeroFiles}
+\input{tableProvenance}
 
 \subsubsection{Problems encountered}
 \paragraph{[TEST-CASE-ID]}
