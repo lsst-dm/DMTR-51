@@ -185,7 +185,8 @@ Data Facility to provide content.
   \item The handoff process from Pipelines to Operations needs to
   be improved.  Improvements include providing details about changes
   in the Pipeline.   Currently the Operator is digging through
-  \texttt{ctrl{\_}pool} code to figure out these details.  
+  \texttt{pipe{\_}drivers} code to figure out some of these details 
+  in addition to repeatedly consulting pipeline developers.
   Providing change details during handoff will not only
   speed up configuring and executing the pipeline, but will also
   provide the information needed to configure the verification tests
@@ -204,13 +205,13 @@ Data Facility to provide content.
       addition to modifying the overall pipeline definition.
   \end{itemize}
   One of the goals of the new Butler and SuperTask effort is
-  to minimize the amount of integration effort.  In the area
-  of the test running the exact same configuration as the 
-  developer, the new Butler and SuperTask effort could 
+  to minimize the amount of integration effort. When running 
+  the exact same configuration as the developer, the new 
+  Butler and SuperTask effort could 
   definitely help.   However, it is not yet clear how much
   integration/configuration effort will still be required with the
   new Butler+SuperTask if the test/Operator wishes to run 
-  something different than the standard pipeline configuration.
+  something different than the default pipeline configuration.
 
   \item At the time of LDM-503-2, it is not yet understood exactly
   how Operations would configure the execution of the pipeline for 
@@ -229,18 +230,18 @@ Data Facility to provide content.
   Cluster.
   \begin{itemize}
     \item The Verification Cluster had multiple outages due to
-hardware network problems.    The Network group replaced the
+networking equipment.    The Network group replaced the
 broken routers and purchased a hot spare.
     \item The Verification Cluster can be very busy making it
 difficult to acquire nodes to do the test work (both initial
-configuration test and actual full test).  To help production 
-needs, special reservations were added to Slurm, and special 
+configuration test and actual full test).  To support production 
+processing, special reservations were added to Slurm, and special 
 queues are planned in the future.
     \item For LDM-503-2, the test used the scratch filesystem
 for both the Data Backbone as well as the job scratch.  This
 filesystem is regularly full preventing the running of the 
 tests.   The system admins turned on the purging of the scratch 
-filesystem, and prodution filesystems are being purchased
+filesystem, and production filesystems are being purchased
 and installed in the next cycle as described in the Aquisition 
 Strategy Document. 
   \end{itemize}
@@ -263,7 +264,8 @@ Strategy Document.
       done manually and can be very error prone especially
       without the proper change details provided during the
       handoff between the Pipeline and Butler developers and
-      Operations.   This means that integration of the new Butler or
+      Operations.   This means that integration of changes 
+      to the current Butler or
       new pipeline definitions will take longer delaying the
       execution of a test or production campaign.
 
@@ -284,7 +286,7 @@ details).   The new Butler implementation should fix this.
   \item Issues encountered that are specific to the use of DESDM
 framework
   \begin{itemize}
-    \item The step in DESDM which configures each step in each compute job does
+    \item The step in DESDM which configures each step for each compute job does
 not scale well at the size of the larger tract.  In DESDM the unit of
 work in a single submission is smaller, so this has not been an issue
 there.   For short term use, this code could be profiled to see if
@@ -311,11 +313,11 @@ software.
 	\item The workflow definition (wcl) that describes a pipeline
       to the DESDM framework includes how to name output files.
       These naming patterns need to match the manually-made Butler 
-      template.  For LDM-503-2 this is done manually
+      policies.  For LDM-503-2 this is done manually
 	  and can be very error-prone.  Until a solution comes from
       the Batch Processing Service using the new Butler and SuperTask,
       modifying the DESDM framework to automatically create the Butler 
-      template file from the pipeline definition would speed up the 
+      policy file from the pipeline definition would speed up the 
       integration process. 
   \end{itemize}
 \end{itemize}
