@@ -383,12 +383,25 @@ This paragraph shall identify by their unique identification, the test cases in 
 \item An assessment of the deviation impact on the validity of the test case
 \end{itemize}
 
-\paragraph{[DRP-00-05]}
-\begin{itemize}
-  \item None
+\paragraph{[DRP-00-05]} \label{sec:deviation-drp-00-05}
 \begin{note}
 Data Facility to provide content.
 \end{note}
+\begin{itemize}
+  \item For the first processing attempts of tract=8766 and tract=8767,
+	there was a misconfiguration which executed both attempts
+	on the same set of worker nodes simultaneously. This does
+	not match the procedure in the Test Specification.  While
+	tract=8766 finished successfully, it took longer wallclock
+	time than expected. Because it produced expected outputs,
+	tract=8766 was not rerun.  The first attempt of tract=8767
+	failed due to a network problem, and the time reported in
+        Table \ref{tab:runtime} is the result of a new attempt
+	(based on the Test Specification regarding resubmission of
+	intermittent infrastructure problems) configured correctly
+	using non-shared nodes.  Thus, the wallclock time for
+	tract=8767 in Table \ref{tab:runtime} is closer to expected
+	time.
 \end{itemize}
 
 \newpage
