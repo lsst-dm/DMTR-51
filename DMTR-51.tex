@@ -175,57 +175,150 @@ of each recommendation and its impact on the software may be provided.
 Data Facility to provide content.
 \end{note}
 
-Operational concerns
+\subsubsection{DRP-00-05}
 \begin{itemize}
-  \item Missing handoff process from Pipelines to Operations.
-  \item Generic issues
+\item Operational concerns
+\begin{itemize}
+  \item For LDM-503-2, some tests were carried out manually through 
+  spot checks.  Further development of verification tools to perform
+  these and additional checks is needed.
+  \item The handoff process from Pipelines to Operations needs to
+  be improved.  Improvements include providing details about changes
+  in the Pipeline.   Currently the Operator is digging through
+  \texttt{ctrl{\_}pool} code to figure out these details.  
+  Providing change details during handoff will not only
+  speed up configuring and executing the pipeline, but will also
+  provide the information needed to configure the verification tests
+  themselves.  Operations should provide a first proposal on what
+  information they would like provided.
+
+  \item Making what can seem like minor changes to the pipeline
+  definition can require more integration time.  Some examples of 
+  pipeline changes that affect the pipeline 
+  execution configuration and verification tests:
   \begin{itemize}
-    \item The workflow definition (wcl) is very fragile to any stack
-	  code changes. For example, in the current task framework,
-	  a config change can imply a change in the science workflow,
-	  so even a seemingly simple config change can make wcl
-	  outdated. With this caveat, long pipeline integration
-	  time is needed to run a version of pipelines through the
-	  processing framework. It is time-consuming to keep pipeline
-	  workflow definitions up to date with the Stack development.
-          No verification is done to ensure complete consistency.
+  \item Some pipeline task configuration changes alter the
+      required input files or what output files are created.  
+  \item Changing what pipeline steps should be executed 
+      may require a pipeline task configuration change in
+      addition to modifying the overall pipeline definition.
+  \end{itemize}
+  One of the goals of the new Butler and SuperTask effort is
+  to minimize the amount of integration effort.  In the area
+  of the test running the exact same configuration as the 
+  developer, the new Butler and SuperTask effort could 
+  definitely help.   However, it is not yet clear how much
+  integration/configuration effort will still be required with the
+  new Butler+SuperTask if the test/Operator wishes to run 
+  something different than the standard pipeline configuration.
+
+  \item At the time of LDM-503-2, it is not yet understood exactly
+  how Operations would configure the execution of the pipeline for 
+  best scalability and management.  This execution may not match 
+  small-scale developer tests where getting individual results 
+  faster is more important.  The desire is to have the
+  test match the expected release campaign execution configuration
+  as much as possible.   As work is done on both the pipeline 
+  science and the Batch Processing Service, effort should be
+  undertaken to determine the release campaign execution
+  configuration.
+\end{itemize}
+  \item Infrastructure issues \\
+  During LDM-503-2 pipeline integration and actual test execution,
+  there were multiple infrastructure issues with the Verification
+  Cluster.
+  \begin{itemize}
+    \item The Verification Cluster had multiple outages due to
+hardware network problems.    The Network group replaced the
+broken routers and purchased a hot spare.
+    \item The Verification Cluster can be very busy making it
+difficult to acquire nodes to do the test work (both initial
+configuration test and actual full test).  To help production 
+needs, special reservations were added to Slurm, and special 
+queues are planned in the future.
+    \item For LDM-503-2, the test used the scratch filesystem
+for both the Data Backbone as well as the job scratch.  This
+filesystem is regularly full preventing the running of the 
+tests.   The system admins turned on the purging of the scratch 
+filesystem, and prodution filesystems are being purchased
+and installed in the next cycle as described in the Aquisition 
+Strategy Document. 
+  \end{itemize}
+
+  \item Butler issues \\
+    It is expected that the new version of the Butler should
+    solve all of these issues.
+    \begin{itemize}
     \item The typical usage of Butler means all filenames are
 	  pre-determined in the Stack, which leads to the situation
-	  that filenames are not unique and conflicts with the DBB
-	  design. To customize the filenames, a Butler template
-	  file is made manaully to provide a customized Butler
-	  configuration file built for each processing attempt (via
-	  the \texttt{desdmfw{\_}lsst{\_}plugins} pacakge; DMTN-059).
-	  This manually-made Butler template needs to match the
-	  workflow definition (wcl). So far this is done manually
-	  and is very error-prone.  Better integration between the
-	  Butler interface and the processing framework will be helpful.
-    \item As our usage of Butler is not standard and well tested,
-	  it is fragile to any changes in Butler implementations
-	  and the integration time can be long.
-    \item Inconsistent naming
-          Table \ref{tab:name}
-          \input{tableNaming.tex}
-    \item Storing metadata to database
+	  that filenames are not unique and conflicts with the 
+	  Data Backbone design.   To customize the filenames, 
+      a Butler template file is made manaully to provide a 
+      customized Butler configuration file built for each 
+      processing attempt (via
+	  the \texttt{desdmfw{\_}lsst{\_}plugins} package; DMTN-059).
+
+      Keeping this customized Butler template file up to date
+      with the current Butler and Pipeline definitions is
+      done manually and can be very error prone especially
+      without the proper change details provided during the
+      handoff between the Pipeline and Butler developers and
+      Operations.   This means that integration of the new Butler or
+      new pipeline definitions will take longer delaying the
+      execution of a test or production campaign.
+
+    \item As the "walled-garden" usage of Butler is not standard,
+	  it is fragile to any changes in Butler implementations.
+      This lengthens pipeline integration time.
+
+    \item For LDM-503-2, retrieving metadata from files to store in
+the database is currently limited to information known by the 
+processing framework (e.g., visit, tract, patch, etc.).  While the
+DESDM software allows specialized plugins to be written to get
+the metadata from the file, there does not seem to be a consistent
+LSST stack method to use across different types of files (i.e., 
+it is not just a matter of using pyfits to read fits headers nor
+is there a single I/O layer function that hides the file format
+details).   The new Butler implementation should fix this. 
   \end{itemize}
-  \item Infrastructure issues
+  \item Issues encountered that are specific to the use of DESDM
+framework
   \begin{itemize}
-    \item Uptime of cluster, problems with GPFS
-    \item Storage space, compete with developer cluster use
-    \item Busy cluster (fix: special reservations/queue)
-  \end{itemize}
-  \item Missing overall processing strategy
-  \item Issues specific to DESDM software
-  \begin{itemize}
-    \item begblock scaling
-    \item restart unit is per tract
-    \item The cleanup of files that are no longer needed is manual and done by operator
+    \item The step in DESDM which configures each step in each compute job does
+not scale well at the size of the larger tract.  In DESDM the unit of
+work in a single submission is smaller, so this has not been an issue
+there.   For short term use, this code could be profiled to see if
+there are straight forward ways to speed it up.   Long term decisions
+about completely rewriting this code depends upon the 2018 decision 
+about whether continuing to use DESDM software.  
+
+    \item In DESDM, the single submission's unit of work is chosen to
+be the amount of work the Operator is willing to start over from
+the beginning.   In the current operational configuration of the
+pipeline, this unit of work is tract.   Restarting a tract from the
+very beginning adds a lot of extra compute time and resources to 
+complete the test (especially when including the scaling issue
+mentioned in the previous item).   Short term solutions include
+modifying operational configuration of the pipeline to make smaller 
+units of work (which currently means human overhead in managing
+more submissions).   Also, DESDM allows for manually starting a 
+pipeline execution using outputs in the Data Backbone from a 
+previous submission.   But this requires an operational 
+pipeline configuration change which takes human knowledge, effort
+and time.   Long term decisions about helping to automate restarts
+depends upon the 2018 decision about whether continuing to use DESDM 
+software.
+	\item The workflow definition (wcl) that describes a pipeline
+      to the DESDM framework includes how to name output files.
+      These naming patterns need to match the manually-made Butler 
+      template.  For LDM-503-2 this is done manually
+	  and can be very error-prone.  Until a solution comes from
+      the Batch Processing Service using the new Butler and SuperTask,
+      modifying the DESDM framework to automatically create the Butler 
+      template file from the pipeline definition would speed up the 
+      integration process. 
   \end{itemize}
 \end{itemize}
-
-For LDM-503-2, some tests were carried out manually through spot checks.
-Improvements and development of tools to perform the checks will be helpful.
-
 
 \newpage
 
