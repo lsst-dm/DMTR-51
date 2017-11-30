@@ -113,7 +113,7 @@ The following table shall summarize, among others, the completion status of each
 \begin{longtable} {|p{0.2\textwidth}|p{0.2\textwidth}|p{0.6\textwidth}|}\hline
 {\bf TEST CASE ID} & {\bf PASS/FAIL} & {\bf COMMENTS} \\\hline
 DRP-00-00 & pass/fail & comment \\\hline
-DRP-00-05 & pass/fail & comment \\\hline
+DRP-00-05 & pass & Execution and checks successful; details provided in \S\ref{sect:detailed} \\\hline
 DRP-00-10 & pass/fail & comment \\\hline
 DRP-00-15 & pass/fail & comment \\\hline
 DRP-00-20 & pass/fail & comment \\\hline
@@ -144,6 +144,158 @@ operational environment and the effect of this difference on the test results.
 This section shall provide any recommended improvement in the design, operation or testing of the software tested. A discussion
 of each recommendation and its impact on the software may be provided.
 
+\begin{note}
+Data Facility to provide content.
+\end{note}
+
+\subsubsection{DRP-00-05}
+\begin{itemize}
+\item Operational concerns
+\begin{itemize}
+  \item For LDM-503-2, some tests were carried out manually through 
+  spot checks.  Further development of verification tools to perform
+  these and additional checks is needed.
+  \item The handoff process from Pipelines to Operations needs to
+  be improved.  Improvements include providing details about changes
+  in the Pipeline.   Currently the Operator is digging through
+  \texttt{pipe{\_}drivers} code to figure out some of these details 
+  in addition to repeatedly consulting pipeline developers.
+  Providing change details during handoff will not only
+  speed up configuring and executing the pipeline, but will also
+  provide the information needed to configure the verification tests
+  themselves.  Operations should provide a first proposal on what
+  information they would like provided.
+
+  \item Making what can seem like minor changes to the pipeline
+  definition can require more integration time.  Some examples of 
+  pipeline changes that affect the pipeline 
+  execution configuration and verification tests:
+  \begin{itemize}
+  \item Pipeline code changes or task configuration changes can alter the
+      required input files or what output files are created.  
+  \item Changing what pipeline steps should be executed 
+      may require a pipeline task configuration change in
+      addition to modifying the overall pipeline definition.
+  \end{itemize}
+  One of the goals of the new Butler and SuperTask effort is
+  to minimize the amount of integration effort. When running 
+  the exact same configuration as the developer, the new 
+  Butler and SuperTask effort could 
+  definitely help.   However, it is not yet clear how much
+  integration/configuration effort will still be required with the
+  new Butler+SuperTask if the test/Operator wishes to run 
+  something different than the default pipeline configuration.
+
+  \item At the time of LDM-503-2, it is not yet understood exactly
+  how Operations would configure the execution of the pipeline for 
+  best scalability and management.  This execution may not match 
+  small-scale developer tests where getting individual results 
+  faster is more important.  The desire is to have the
+  test match the expected release campaign execution configuration
+  as much as possible.   As work is done on both the pipeline 
+  science and the Batch Processing Service, effort should be
+  undertaken to determine the release campaign execution
+  configuration.
+\end{itemize}
+  \item Infrastructure issues \\
+  During LDM-503-2 pipeline integration and actual test execution,
+  there were multiple infrastructure issues with the Verification
+  Cluster.
+  \begin{itemize}
+    \item The Verification Cluster had multiple outages due to
+networking equipment.    The Network group replaced the
+broken routers and purchased a hot spare.
+    \item The Verification Cluster can be very busy making it
+difficult to acquire nodes to do the test work (both initial
+configuration test and actual full test).  To support production 
+processing, production reservations were added to Slurm, and production
+queues are planned in the future.
+    \item For LDM-503-2, the test used the scratch filesystem
+for both the Data Backbone as well as the job scratch.  This
+filesystem is regularly full preventing the running of the 
+tests.   The system admins turned on the purging of the scratch 
+filesystem, and production filesystems are being purchased
+and installed in the next cycle as described in the Aquisition 
+Strategy Document. 
+  \end{itemize}
+
+  \item Butler issues \\
+    It is expected that the new version of the Butler should
+    solve all of these issues.
+    \begin{itemize}
+    \item The typical usage of Butler means all filenames are
+	  pre-determined in the Stack, which leads to the situation
+	  that filenames are not unique and conflicts with the 
+	  Data Backbone design.   To customize the filenames, 
+      a Butler template file is made manaully to provide a 
+      customized Butler configuration file built for each 
+      processing attempt (via
+	  the \texttt{desdmfw{\_}lsst{\_}plugins} package; DMTN-059).
+
+      Keeping this customized Butler template file up to date
+      with the current Butler and Pipeline definitions is
+      done manually and can be very error prone especially
+      without the proper change details provided during the
+      handoff between the Pipeline and Butler developers and
+      Operations.   This means that integration of changes 
+      to the current Butler or
+      new pipeline definitions will take longer delaying the
+      execution of a test or production campaign.
+
+    \item As the "walled-garden" usage of Butler is not standard,
+	  it is fragile to any changes in Butler implementations.
+      This lengthens pipeline integration time.
+
+    \item For LDM-503-2, retrieving metadata from files to store in
+the database is currently limited to information known by the 
+processing framework (e.g., visit, tract, patch, etc.).  While the
+DESDM software allows specialized plugins to be written to get
+the metadata from the file, a seperate plugin using LSST stack
+methods may be required for each types of files (i.e.,
+it is not just a matter of using pyfits to read fits headers nor
+is there a single I/O layer function that hides the file format
+details).   The new Butler implementation should fix this. 
+
+  \end{itemize}
+  \item Issues encountered that are specific to the use of DESDM
+framework
+  \begin{itemize}
+    \item The step in DESDM framework which configures each step for each compute job does
+not scale well at the size of the larger tract.  In DESDM Operations the unit of
+work in a single submission is smaller, so this has not been an issue
+there.   For short term use, this code could be profiled to see if
+there are straight forward ways to speed it up.   Long term decisions
+about completely rewriting this code depends upon the 2018 decision 
+about whether continuing to use DESDM software.  
+
+    \item In DESDM Operations, the single submission's unit of work is chosen to
+be the amount of work the Operator is willing to start over from
+the beginning.   In this test, this unit of work is tract using
+the current operational configuration of the pipeline.   Restarting a tract from the
+very beginning adds a lot of extra compute time and resources to 
+complete the test (especially when including the scaling issue
+mentioned in the previous item).   Short term solutions include
+modifying operational configuration of the pipeline to make smaller 
+units of work (which currently means human overhead in managing
+more submissions).   Also, DESDM allows for manually starting a 
+pipeline execution using outputs in the Data Backbone from a 
+previous submission.   But this requires an operational 
+pipeline configuration change which takes human knowledge, effort
+and time.   Long term decisions about helping to automate restarts
+depends upon the 2018 decision about whether continuing to use DESDM 
+software.
+	\item The workflow definition (wcl) that describes a pipeline
+      to the DESDM framework includes how to name output files.
+      These naming patterns need to match the manually-made Butler 
+      policies.  For LDM-503-2 this is done manually
+	  and can be very error-prone.  Until a solution comes from
+      the Batch Processing Service using the new Butler and SuperTask,
+      modifying the DESDM framework to automatically create the Butler 
+      policy file from the pipeline definition would speed up the 
+      integration process. 
+  \end{itemize}
+\end{itemize}
+
 \newpage
 
 \section{Detailed Test Results \label{sect:detailed}}
@@ -154,12 +306,40 @@ This paragraph shall summarize the results of the test. When the completion stat
 shall reference the following paragraphs for details.
 
 \paragraph{[DRP-00-05]}
-\begin{itemize}
-\item
 \begin{note}
 Data Facility to provide content.
 \end{note}
-\end{itemize}
+Basic data completeness and integrity checks from LDM-534 4.2.8.3
+
+\begin{enumerate}
+  \item Check the existence of the expected files: PASSED
+  \begin{enumerate}
+    \item Table \ref{tab:count} listing all release data products per tract:  expected counts, actual counts, number with 0 filesizes for each datasetType
+    \item To verify the physical location of files on the filesystem
+	  match the location information tracked in the Data Backbone
+	  database tables, we used the tool
+	  \texttt{compare{\_}db.py} from the DESDM \texttt{FileMgmt}
+	  package.  Paths, filesize, and md5sum were compared. The test
+	  results were that both the database and filesystem matched with 50656 files in tract=8766, 52041 files in tract=8767, and 273375 files in tract=9813.
+  \end{enumerate}
+  \item Check existence of the expected metadata: PASSED\\
+    The following metadata is expected to have been saved
+    \begin{itemize}
+    \item calexp: tract, visit, filter, ccd
+    \item deepCoadd\_calexp: tract, patch, filter
+    \end{itemize}
+    It was verified that the above mentioned metadata had non-NULL values stored for the data products in the Data Backbone database tables.
+  \item Check existence of the expected provenance: PASSED
+  \begin{enumerate}
+    \item Table \ref{tab:provenance} shows that each file can be linked with the step and processing attempt.
+    \item Via manual spot checks, it was verified that information linking input files to each step was saved to the Data Backbone database tables.
+  \end{enumerate}
+  \item Check (existence) runtime metrics: PASSED
+  \begin{enumerate}
+    \item Table \ref{tab:runtime} shows wallclock time for running the entire pipeline for each tract and total cpu time per exec
+    \item Table \ref{tab:runtimeExec} shows for each tract + pipeline step:  number of executions, total user time, total system time, and largest MAXRSS
+  \end{enumerate}
+\end{enumerate}
 
 \subsubsection{Problems encountered}
 \paragraph{[TEST-CASE-ID]}
@@ -173,8 +353,22 @@ This paragraph shall identify by their unique identification, the test cases in 
 \end{itemize}
 
 \paragraph{[DRP-00-05]}
+
 \begin{itemize}
-\item
+  \item During execution (LDM-534 \S 4.2.8.2), several processing
+	attempts failed due to unstable GPFS availability resulted
+	from hardware problems and network issues. We retried the
+	attempts after the transient problems were resolved, following
+	the Test Specifications.
+  \item The scratch filesystem, where the prototype DBB stores the
+	files, was close to full several times during test execution.
+	We had to manually purge files to ensure sufficient space
+	for the execution.
+  \item We needed to apply a patch on top of the Stack release to
+	workaround the issue that commas are part of the data IDs;
+	this has been a known problem as discussed in \jira{RFC-361}.
+	The fix has been agreed in RFC-365 for future implementation
+	in \jira{DM-11874}, \jira{DM-11875}, and \jira{DM-11876}.
 \begin{note}
 Data Facility to provide content.
 \end{note}
@@ -189,12 +383,25 @@ This paragraph shall identify by their unique identification, the test cases in 
 \item An assessment of the deviation impact on the validity of the test case
 \end{itemize}
 
-\paragraph{[DRP-00-05]}
-\begin{itemize}
-\item
+\paragraph{[DRP-00-05]} \label{sec:deviation-drp-00-05}
 \begin{note}
 Data Facility to provide content.
 \end{note}
+\begin{itemize}
+  \item For the first processing attempts of tract=8766 and tract=8767,
+	there was a misconfiguration which executed both attempts
+	on the same set of worker nodes simultaneously. This does
+	not match the procedure in the Test Specification.  While
+	tract=8766 finished successfully, it took longer wallclock
+	time than expected. Because it produced expected outputs,
+	tract=8766 was not rerun.  The first attempt of tract=8767
+	failed due to a network problem, and the time reported in
+        Table \ref{tab:runtime} is the result of a new attempt
+	(based on the Test Specification regarding resubmission of
+	intermittent infrastructure problems) configured correctly
+	using non-shared nodes.  Thus, the wallclock time for
+	tract=8767 in Table \ref{tab:runtime} is closer to expected
+	time.
 \end{itemize}
 
 \newpage
@@ -211,6 +418,18 @@ for the actions taken - Mantis issues, etc.)
 \newpage
 
 \appendix
+
+\newpage
+\section{Detailed tests results \label{sect:results}}
+
+\input{tableProductCounts}
+\input{tableZeroFiles}
+\input{tableProvenance}
+\input{tableRuntime}
+\input{tableRuntimeExec}
+
+
+\newpage
 \section{ANNEX A: Unit Tests \label{sect:unit_tests}}
 Description of the unit test coverage given by Cobertura
 
