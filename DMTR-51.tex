@@ -103,22 +103,40 @@ Section \ref{sect:configuration} of this document provides details of the \produ
 Section \ref{sect:personnel} lists the individuals involved in performing the tests.
 Section \ref{sect:overview} provides an overview of the test results, while Section \ref{sect:detailed} provides more detailed results from each individual test case.
 
-\section{Test Configuration \label{sect:configuration}}
-This section shall contain a full identification of the hardware and the software to which this document applies, providing
-the \product  baseline.\\
-Additionally, this paragraph shall also document the documents, input data description, software requirements, interface requirements and/or ICDs and coding
-standards that the tests use or follow.\\
-Reference to where all software used and input and output data can be retrieved, if needed again, should be provided.
-\subsection{Documents \label{sect:docsconf}}
-Specify the documents composing the baseline for which we are testing against. Especially it is important to provide the  issue
-and revision numbers of the Software Testing Specification document.
-\subsection{Software \label{sect:swconf}}
-Specify the characteristics and configuration of the software that was run during the execution of the tests. This may include
-system software as operating systems, compilers, etc.
-\subsection{Hardware \label{sect:hwconf}}
-Specify the characteristics and configuration of the hardware required to execute the tests.
-\subsection{Input Data \label{sect:inputdata}}
-Specify the baseline of the input data used.
+\section{Test Configuration}
+\label{sect:configuration}
+
+\subsection{Documents}
+
+This test report refers to the execution of tests DRP-00-00 through DRP-00-35 in \citeds{LDM-534}.
+
+\begin{note}
+At time of writing, LDM-534 has not been baselined, so a detailed version
+number is not available.
+\end{note}
+
+\subsection{Hardware}
+\label{sect:hwconf}
+
+All tests were executed on systems in the LSST Data Facility.
+
+Software installation (DRP-00-00) and scientific analysis work (DRP-00-10 through DRP-00-35) were carried out on \texttt{lsst-dev01.ncsa.illinois.edu}.
+At time of text execution, this was a Dell PowerEdge R730 with 24 physical Intel Xeon E5-2690v3 CPU cores at 2.60\,GHz and 256\,GB of RAM.
+
+Bulk data processing (DRP-00-05) was carried out on the LSST Verification Cluster (VC).
+At the time of test execution, the VC provided 48 Dell C6320 nodes, each with 24 physical Intel Xeon E5-2680v3 CPU cores at 2.50\,GHz and 128\,GB of RAM.
+
+\subsection{Software}
+\label{sect:swconf}
+
+All systems used for testing --- including both \texttt{lsst-dev01} and the VC nodes --- were running CentOS Linux release 7.4.1708.
+The \texttt{devtoolset-6}\footnote{\url{https://access.redhat.com/documentation/en-us/red_hat_developer_toolset/6/html/6.0_release_notes/}} toolchain, including GCC\footnote{\url{https://gcc.gnu.org/}} version 6.3.1, was enabled throughout these tests.
+
+\subsection{Input Data}
+\label{sect:inputdata}
+
+Input data for all tests was based on the Hyper Suprime-Cam “RC1” dataset, as described in the appendix to \citeds{LDM-534}.
+Calibration dataset 20170105 was used, defined as per \citeds{DMTR-31}.
 
 \section{Personnel}
 \label{sect:personnel}
