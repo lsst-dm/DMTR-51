@@ -1,81 +1,108 @@
 \documentclass[DM,lsstdraft,STR,toc]{lsstdoc}
+\input meta.tex
 
 \begin{document}
 
-%set the WP number or product here for the requirements
+\def\milestoneName{HSC Reprocessing}
+\def\milestoneId{LDM-503-2}
 \def\product{LSST Level 2 System}
 
 \setDocCompact{true}
 
-%Product name first in title
-\title    [TR for \product]
-                    {\color[rgb]{0.16,0.42,0.57} \sf \product ~ Test Report}
-\setDocRef      {TR-XXXXXX} % the reference code
-\setDocDate     {\today}              % the date of the issue
+\title[\milestoneId{}~Test Report]{\milestoneId{} (\milestoneName{})~Test Report}
+\setDocRef{\lsstDocType-\lsstDocNum}
+\setDocDate{\vcsdate}
 \setDocUpstreamLocation{\url{https://github.com/lsst/lsst-texmf/examples}}
+\author{% `git log --pretty=%an | sort --key=2 | uniq` ?
+  John D. Swinbank,
+  Hsin-Fang Chiang,
+  Michelle Gower,
+  Jim Bosch
+}
 
-\author   {}
-
-% Comment out the setLSSTDU if you do not want it do not set it to Blanck
-
-%
-% a short abstract
-%
-\setDocAbstract {This is a template for the Test Report for \product. It renders findings and results
-from test controls.}
-
-%
-% the title page
-%
-\maketitle
-
-%
-%	Revision history MOST RECENT FIRST
-%
-
-\setDocChangeRecord{%
-\addtohist{1.0}{2017-11-30}{Initial version.} {}
+% Most recent last
+\setDocChangeRecord{
+\addtohist{1}{2017-11-30}{Initial version.}{Chiang, Gower et al.}
 }
 
 
-\section{Introduction \label{sect:intro}}
+\setDocCurator{John D. Swinbank}
+\setDocUpstreamLocation{\url{https://github.com/lsst-dm/\lsstDocType-\lsstDocNum}}
+\setDocUpstreamVersion{\vcsrevision}
 
-\subsection{Objectives \label{sect:objectives}}
-This section shall describe the objectives of the report, viz. document the testing activities that were carried out against the STP and STS, assessment of the software tested, etc.
 
-\subsection{Scope \label{sect:scope}}
-The general ambit of \product testing is defined in \citell{LDM-503}.\\ Specific scope of the test campaign that this report documents
-should be described in this section.
+\setDocAbstract{
+This is the test report for \milestoneId{} (\milestoneName{}), an LSST DM level 2 milestone pertaining to the \product{}.
+}
 
-\subsection{System Overview \label{sect:systemoverview}}
-This paragraph shall briefly states the purpose of the system and the software to which this document applies.
-It shall describe the general nature of the system and software; summarize the history of system development, operation
-and maintenance.
-A summary of the software functionality,  software configuration , its  operational environment and its external interfaces can be provided.
+\maketitle
 
-\subsection{Applicable Documents \label{sect:appdocs}}
+\section{Introduction}
+\label{sect:intro}
+
+\subsection{Objectives}
+\label{sect:objectives}
+
+This document describes the results of tests carried out in late (calendar) 2017 on the \product{} in order to assess progress against the LSST DM level 2 milestone \milestoneId{}.
+We report on the success or failure of applicable test cases and assess the state of the software and services tested.
+
+\subsection{Scope}
+\label{sect:scope}
+
+The overall test plan for the LSST Data Management system is described in \citeds{LDM-503}.
+This document specifically refers to the late (calendar) 2017 milestone \milestoneId{}, which tests the \product{}.
+The overall \product{} test specification is defined in \citeds{LDM-534}.
+The test plan for \milestoneId{} involves the execution of the entire DRP-00
+(Small Scale Data Release Processing) specification, including the following
+test cases:
+
+\begin{description}
+
+  \item[DRP-00-00]{Installation of the Data Release Production science payload}
+  \item[DRP-00-05]{Execution of the DRP Science Payload by the Batch Production Service}
+  \item[DRP-00-10]{Data Release Includes Required Data Products}
+  \item[DRP-00-15]{Scientific Verification of Source Catalog}
+  \item[DRP-00-20]{Scientific Verification of Forced Source Catalog}
+  \item[DRP-00-25]{Scientific Verification of Object Catalog}
+  \item[DRP-00-30]{Scientific Verification of Processed Visit Images}
+  \item[DRP-00-35]{Scientific Verification of Coadd Images}
+
+\end{description}
+
+\subsection{System Overview}
+\label{sect:systemoverview}
+
+The \product{} is that part of the LSST Data Management system which will be responsible for scheduled, periodic data processing during LSST operations.
+The most prominent example of such processing is the generation of LSST's annual releases of both catalog and image data.
+However, the \product{} is also responsible for the generation of template images (used in the nightly processing system) and calibration products (used in both nightly and annual processing), and for the Level 2 Quality Control Service (\citeds{LDM-148}).
+The \milestoneId{} milestone focuses only on the data release production part of the system.
+
+Note that we may broadly think of the \product{} as consisting of two independent parts: the Batch Production Service, which provides scheduling and workflow services, and the Science Payloads, which contain the algorithmic content.
+The \milestoneId{} milestone exercises both parts of the system.
+
+\subsection{Applicable Documents}
+\label{sect:appdocs}
 \addtocounter{table}{-1}
 
 \begin{tabular}[htb]{l l}
-\citeds{LDM-534} & \product Testing Specification\\
-\citeds{LDM-503}& DM Test Plan\\
-\citeds{LDM-294}& LSST DM Project Management Plan\\
+\citeds{LDM-294} & LSST DM Project Management Plan\\
+\citeds{LDM-503} & DM Test Plan\\
+\citeds{LDM-534} & \product{} Test Specification\\
 \end{tabular}
 
-\subsection{References\label{sect:references}}
+\subsection{References}
+\label{sect:references}
 
 \renewcommand{\refname}{}
 \bibliography{lsst,refs,books,refs_ads}
 
-\subsection{Definitions, acronyms, and abbreviations \label{sect:acronyms}} % include acronyms.tex generated by the acronyms.csh (GaiaTools)
-%\input{acronyms}
+\subsection{Document Overview}
+\label{sect:docoverview}
 
-\subsection{Document Overview \label{sect:docoverview}}
-This section shall describe the contents of the document and explains how the rest of the report is organized.
+Section \ref{sect:configuration} of this document provides details of the \product{} baseline used for this test, including relevant hardware and software configurations.
+Section \ref{sect:personnel} lists the individuals involved in performing the tests.
+Section \ref{sect:overview} provides an overview of the test results, while Section \ref{sect:detailed} provides more detailed results from each individual test case.
 
-%----------------------------------------------------
-% TEST CONFIGURATION - baseline
-%----------------------------------------------------
 \section{Test Configuration \label{sect:configuration}}
 This section shall contain a full identification of the hardware and the software to which this document applies, providing
 the \product  baseline.\\
@@ -196,45 +223,5 @@ This paragraph shall identify by their unique identification, the test cases in 
 Data Facility to provide content.
 \end{note}
 \end{itemize}
-
-\newpage
-
-\section{Test Review Board Declaration\label{sect:trb}}
-This section must be filled only if the test campaign has a  formal
-test review board.
-After the tests are executed and the test team circulates a draft of
-this document the TRB meets to declare the completion of the test campaign.
-This section must contain this declaration and the pass of fail status
-of the tests after completion (in case of failing it should also account
-for the actions taken - Mantis issues, etc.)
-
-\newpage
-
-\appendix
-\section{ANNEX A: Unit Tests \label{sect:unit_tests}}
-Description of the unit test coverage given by Cobertura
-
-\newpage
-\section{ANNEX B: Patch releases verification}
-
-{\it describe here the test activities executed in order to garantee the quality of the patch release}
-
-\subsubsection{Patch release C.M.n}
-
-Due to the small number issues fixed with the {\it \product} patch release {\it C.M.n} (very short jira list)
-and due to the minimal changes applied to the software, the test campaign completed for the {\it \product} major
-release $C.M$ is still valid.
-
-All unit and integration tests are still running without problems.
-
-Following manual verification has been done:
-
-\begin{itemize}
-\item verification 1
-\item ...
-\end{itemize}
-
-No system test has been re-executed, but the fix has been verified with a specific run
-on {\it Enclave??} platform.
 
 \end{document}
