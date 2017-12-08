@@ -139,7 +139,7 @@ Test cases DRP-00-10, DRP-00-15, DRP-00-20, DRP-00-25, DRP-00-30 and DRP-00-35 w
 
 \begin{longtable} {|p{0.2\textwidth}|p{0.2\textwidth}|p{0.6\textwidth}|}\hline
 {\bf TEST CASE ID} & {\bf PASS/FAIL} & {\bf COMMENTS} \\\hline
-DRP-00-00 & pass/fail & comment \\\hline
+DRP-00-00 & pass & comment \\\hline
 DRP-00-05 & pass & Refer to \S\ref{sect:detailed}. \\\hline
 DRP-00-10 & pass/fail & comment \\\hline
 DRP-00-15 & pass/fail & comment \\\hline
@@ -303,7 +303,18 @@ mentioned in the previous item).
 \section{Detailed Test Results}
 \label{sect:detailed}
 
-\paragraph{DRP-00-05}
+\subsection{DRP-00-00}
+
+The string \texttt{Ok} was returned when executing
+
+\begin{verbatim}
+  $ python bin/compare expected/Linux64/detected-sources.txt
+\end{verbatim}
+
+after running the \texttt{demo.sh} on both the cluster head node (\texttt{lsst-dev01}) and on an example compute node.
+
+
+\subsection{DRP-00-05}
 
 \begin{enumerate}
 
