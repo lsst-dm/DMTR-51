@@ -297,7 +297,9 @@ after running the \texttt{demo.sh} on both the cluster head node (\texttt{lsst-d
   \begin{enumerate}
 
     \item{
-      Table \ref{tab:count} list all release data products per tract:  expected counts, actual counts, number with 0 filesizes for each dataset type.}
+      Table \ref{tab:count} list all release data products per tract.
+      For each product, we provide the expected number of files to be generated (where available) and the number of files gneerated in practice.
+      Each of these files was checked to ensure that it contained some data (i.e., the size of the file was non-zero).}
 
     \item{
       To verify the physical location of files on the filesystem match the location information tracked in the Data Backbone database tables, we used the tool
@@ -402,7 +404,6 @@ None.
 \section{Detailed tests results}
 
 \input{tableProductCounts}
-\input{tableZeroFiles}
 \input{tableProvenance}
 \input{tableRuntime}
 \input{tableRuntimeExec}
