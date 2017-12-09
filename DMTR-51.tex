@@ -268,7 +268,7 @@ It is expected that the new version of the Butler should solve all of these issu
   \item{
     The typical usage of Butler means all filenames are pre-determined in the Stack, which leads to the situation that filenames are not unique and conflicts with the
     Data Backbone design.
-    To customize the filenames, a Butler template file is made manaully to provide a customized Butler configuration file built for each processing attempt (via the \texttt{desdmfw{\_}lsst{\_}plugins} package; DMTN-059 \textbf{CITATION}).
+    To customize the filenames, a Butler template file is made manaully to provide a customized Butler configuration file built for each processing attempt (via the \texttt{desdmfw{\_}lsst{\_}plugins} package; \citeds{DMTN-059}).
 
     Keeping this customized Butler template file up to date with the current Butler and Pipeline definitions is done manually and can be very error prone especially without the proper change details provided during the handoff between the Pipeline and Butler developers and Operations.
     This means that integration of changes to the current Butler or new pipeline definitions will take longer delaying the execution of a test or production campaign.
