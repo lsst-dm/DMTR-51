@@ -190,7 +190,7 @@ The results of this test therefore establish a baseline system, rather than test
 \subsection{Recommended Improvements}
 \label{sect:recommendations}
 
-\paragraph{Operational Concerns}
+\subsubsection{Operational}
 
 \begin{itemize}
 
@@ -233,66 +233,21 @@ The results of this test therefore establish a baseline system, rather than test
 
 \end{itemize}
 
-\paragraph{Infrastructure Issues}
+\subsubsection{Infrastructure}
 
-During LDM-503-2 pipeline integration and actual test execution, there were multiple infrastructure issues with the Verification Cluster.
+Problems with the Verification Cluster infrastructure were encountered during the execution of DRP-00-05 as described in \S\ref{sect:problems-drp-00-05}.
+These problems may be mitigated by increasing the scratch storage space available on the cluster and adding dedicated production job queues to the Slurm system for future tests.
 
-\begin{itemize}
+\subsubsection{DESDM Execution Framework}
 
-  \item{
-    The Verification Cluster had multiple outages due to networking equipment.
-    The Data Facility's Network Group replaced the broken routers and purchased a hot spare.
-  }
-
-  \item{
-    The Verification Cluster can be very busy making it difficult to acquire nodes to do the test work (both initial configuration test and actual full test).
-    To support production processing, production reservations were added to Slurm, and production queues are planned in the future.
-  }
-
-
-  \item{
-    This test used the scratch filesystem for both the Data Backbone as well as the job scratch.
-    This filesystem is regularly full preventing the running of the tests.
-    The system admins turned on the purging of the scratch filesystem, and production filesystems are being purchased and installed in the next cycle as described in the Aquisition Strategy Document \textbf{CITATION NEEDED}.
-  }
-
-\end{itemize}
-
-\paragraph{Butler Issues}
-
-It is expected that the new version of the Butler should solve all of these issues.
-
-\begin{itemize}
-
-  \item{
-    The typical usage of Butler means all filenames are pre-determined in the Stack, which leads to the situation that filenames are not unique and conflicts with the Data Backbone design.
-    To customize the filenames, a Butler template file is made manaully to provide a customized Butler configuration file built for each processing attempt (via the \texttt{desdmfw{\_}lsst{\_}plugins} package; \citeds{DMTN-059}).
-
-    Keeping this customized Butler template file up to date with the current Butler and Pipeline definitions is done manually and can be very error prone especially without the proper change details provided during the handoff between the Pipeline and Butler developers and the Data Facility.
-    This means that integration of changes to the current Butler or new pipeline definitions will take longer delaying the execution of a test or production campaign.
-  }
-
-  \item{
-    As the ``walled-garden'' usage of Butler is not standard, it is fragile to any changes in Butler implementations.
-    This lengthens pipeline integration time.
-  }
-
-  \item{
-    For the purposes of this test, retrieving metadata from files to store in the database is currently limited to information known by the processing framework (e.g., visit, tract, patch, etc.).
-    While the DESDM software allows specialized plugins to be written to get the metadata from the file, a seperate plugin using LSST stack methods may be required for each types of files (i.e., it is not just a matter of using pyfits to read fits headers nor is there a single I/O layer function that hides the file format details).
-    The new Butler implementation should fix this.
-  }
-
-\end{itemize}
-
-\paragraph{Issues encountered that are specific to the use of DESDM}
+A number of improvements to the DESDM framework are suggested by this work.
+These include:
 
 \begin{itemize}
   \item{
     The step in DESDM framework which configures each step for each compute job does not scale well at the size of the larger tract.
     In DESDM Operations the unit of work in a single submission is smaller, so this has not been an issue there.
     For short term use, this code could be profiled to see if there are straight forward ways to speed it up.
-    Long term decisions about completely rewriting this code depends upon the 2018 decision about whether continuing to use DESDM software.
   }
 
   \item{
@@ -303,17 +258,19 @@ mentioned in the previous item).
     Short term solutions include modifying operational configuration of the pipeline to make smaller units of work (which currently means human overhead in managing more submissions).
     Also, DESDM allows for manually starting a pipeline execution using outputs in the Data Backbone from a previous submission.
     But this requires an operational pipeline configuration change which takes human knowledge, effort and time.
-    Long term decisions about helping to automate restarts depends upon the 2018 decision about whether the DESDM software will continue to be used for LSST processing.
   }
 
   \item{
     The workflow definition (wcl) that describes a pipeline to the DESDM framework includes how to name output files.
     These naming patterns need to match the manually-made Butler policies.
     For this test, this was done manually and was very error-prone.
-    Until a solution comes from the Batch Processing Service using the new Butler and SuperTask, modifying the DESDM framework to automatically create the Butler policy file from the pipeline definition would speed up the integration process.
+    Until this issue is resolved by the Batch Processing Service integrating
+    updated DM Middleware (following \citeds{LDM-556}), modifying the DESDM framework to automatically create the Butler policy file from the pipeline definition would speed up the integration process.
   }
 
 \end{itemize}
+
+At the time of writing, the long term execution framework for LSST processing has not yet been selected; we note that it may make sense only to implement these improvements to DESDM if it is ultimately chosen for this role.
 
 \newpage
 
@@ -396,12 +353,14 @@ This paragraph shall identify by their unique identification, the test cases in 
 None.
 
 \paragraph{DRP-00-05}
+\label{sect:problems-drp-00-05}
 
 \begin{itemize}
 
   \item{
     During execution (LDM-534 \S 4.2.8.2), several processing attempts failed due to unstable GPFS availability resulted from hardware problems and network issues.
     We retried the attempts after the transient problems were resolved, following the Test Specifications.
+    The Data Facility's Network Group replaced the broken routers and purchased a hot spare.
   }
 
   \item{
@@ -410,10 +369,19 @@ None.
   }
 
   \item{
+    The Verification Cluster can be very busy making it difficult to acquire nodes to do the test work (both initial configuration test and actual full test).
+  }
+
+  \item{
     We needed to apply a patch on top of the Stack release to workaround the issue that commas are part of the data IDs; this has been a known problem as discussed in \jira{RFC-361}.
 	The fix has been agreed in RFC-365 for future implementation in \jira{DM-11874}, \jira{DM-11875}, and \jira{DM-11876}.
   }
 
+  \item{
+    The current implementation of the ``Data Butler'' I/O abstraction in the DM Stack is hard to adapt to the Data Backbone and DESDM framework in use for this test.
+    This caused lengthy integration issues and fragility in the system design.
+    It is expected that future work on the DM middleware will resolve these concerns (\citeds{LDM-556}).
+  }
 \end{itemize}
 
 \subsubsection{Deviations from test cases/procedures}
