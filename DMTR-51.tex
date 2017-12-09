@@ -325,7 +325,16 @@ after running the \texttt{demo.sh} on both the cluster head node (\texttt{lsst-d
     Check existence of the expected provenance: PASSED
 
     \begin{enumerate}
-      \item{Table \ref{tab:provenance} shows that each file can be linked with the step and processing attempt.}
+      \item{For each file, the provenance system was checked to ensure that there were no:
+
+        \begin{enumerate}
+          \item{Missing direct association of output files with the processing attempt;}
+          \item{Missing ``was-generated-by'' association (per the Open Provenance Model, \cite{soton271449});}
+          \item{Instances in which the  ``was-generated-by'' association did
+          not belong to the specificed processing attempt.}
+        \end{enumerate}
+      }
+
       \item{Via manual spot checks, it was verified that information linking input files to each step was saved to the Data Backbone database tables.}
     \end{enumerate}
   }
@@ -404,7 +413,6 @@ None.
 \section{Detailed tests results}
 
 \input{tableProductCounts}
-\input{tableProvenance}
 \input{tableRuntime}
 \input{tableRuntimeExec}
 
