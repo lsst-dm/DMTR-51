@@ -200,11 +200,11 @@ The results of this test therefore establish a baseline system, rather than test
   }
 
   \item{
-    The handoff process from Pipelines to Operations needs to be improved.
-    Improvements include providing details about changes in the Pipeline.
-    Currently the Operator is digging through \texttt{pipe{\_}drivers} code to figure out some of these details in addition to repeatedly consulting pipeline developers.
-  Providing change details during handoff will not only speed up configuring and executing the pipeline, but will also provide the information needed to configure the verification tests themselves.
-    Operations should provide a first proposal on what information they would like provided.
+    The handoff process from Pipelines to the Data Facility needs to be improved.
+    Improvements include providing details about changes in the codebase.
+    Currently the operator is digging through \texttt{pipe{\_}drivers} code to figure out some of these details in addition to repeatedly consulting pipeline developers.
+    Providing change details during handoff will not only speed up configuring and executing the pipeline, but will also provide the information needed to configure the verification tests themselves.
+    The Data Facility should provide a first proposal on what information they would like provided.
   }
 
   \item{
@@ -224,7 +224,7 @@ The results of this test therefore establish a baseline system, rather than test
   }
 
   \item{
-    At the time of this test, it is not yet understood exactly how Operations would configure the execution of the pipeline for best scalability and management.
+    At the time of this test, it is not yet understood exactly how the Data Facility would configure the execution of the pipeline for best scalability and management.
     This execution may not match small-scale developer tests where getting individual results faster is more important.
     The desire is to have the test match the expected release campaign execution configuration
   as much as possible.
@@ -241,7 +241,7 @@ During LDM-503-2 pipeline integration and actual test execution, there were mult
 
   \item{
     The Verification Cluster had multiple outages due to networking equipment.
-    The Network group replaced the broken routers and purchased a hot spare.
+    The Data Facility's Network Group replaced the broken routers and purchased a hot spare.
   }
 
   \item{
@@ -266,11 +266,10 @@ It is expected that the new version of the Butler should solve all of these issu
 \begin{itemize}
 
   \item{
-    The typical usage of Butler means all filenames are pre-determined in the Stack, which leads to the situation that filenames are not unique and conflicts with the
-    Data Backbone design.
+    The typical usage of Butler means all filenames are pre-determined in the Stack, which leads to the situation that filenames are not unique and conflicts with the Data Backbone design.
     To customize the filenames, a Butler template file is made manaully to provide a customized Butler configuration file built for each processing attempt (via the \texttt{desdmfw{\_}lsst{\_}plugins} package; \citeds{DMTN-059}).
 
-    Keeping this customized Butler template file up to date with the current Butler and Pipeline definitions is done manually and can be very error prone especially without the proper change details provided during the handoff between the Pipeline and Butler developers and Operations.
+    Keeping this customized Butler template file up to date with the current Butler and Pipeline definitions is done manually and can be very error prone especially without the proper change details provided during the handoff between the Pipeline and Butler developers and the Data Facility.
     This means that integration of changes to the current Butler or new pipeline definitions will take longer delaying the execution of a test or production campaign.
   }
 
@@ -298,7 +297,7 @@ It is expected that the new version of the Butler should solve all of these issu
   }
 
   \item{
-    In DESDM Operations, the single submission's unit of work is chosen to be the amount of work the Operator is willing to start over from the beginning.
+    In DESDM Operations, the single submission's unit of work is chosen to be the amount of work the operator is willing to start over from the beginning.
     In this test, this unit of work is tract using the current operational configuration of the pipeline.
     Restarting a tract from the very beginning adds a lot of extra compute time and resources to complete the test (especially when including the scaling issue
 mentioned in the previous item).
