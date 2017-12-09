@@ -333,7 +333,7 @@ after running the \texttt{demo.sh} on both the cluster head node (\texttt{lsst-d
   \item{Check (existence) runtime metrics: PASSED
 
     \begin{enumerate}
-      \item{Table \ref{tab:runtime} shows wallclock time for running the entire pipeline for each tract and total cpu time per execution.}
+      \item{Table \ref{tab:runtime} shows wall-clock time for running the entire pipeline for each tract and total cpu time per execution.}
       \item{Table \ref{tab:runtimeExec} provides details of execution time and memory usage at a per-process level.}
     \end{enumerate}
   }
@@ -390,10 +390,10 @@ None.
   \item{
     For the first processing attempts of tracts 8766 and 8767, there was a misconfiguration which executed both attempts on the same set of worker nodes simultaneously.
     This does not match the procedure in the Test Specification.
-    While tract 8766 finished successfully, it took longer wallclock time than expected.
+    While tract 8766 finished successfully, it took longer wall-clock time than expected.
     Because it produced expected outputs, tract 8766 was not rerun.
     The first attempt of tract 8767 failed due to a network problem, and the time reported in Table \ref{tab:runtime} is the result of a new attempt (based on the Test Specification regarding resubmission of intermittent infrastructure problems) configured correctly using non-shared nodes.
-    Thus, the wallclock time for tract 8767 in Table \ref{tab:runtime} is closer to the expected
+    Thus, the wall-clock time for tract 8767 in Table \ref{tab:runtime} is closer to the expected
 	time.
   }
 \end{itemize}
