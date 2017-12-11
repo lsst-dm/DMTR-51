@@ -207,7 +207,7 @@ The results of this test therefore establish a baseline system, rather than test
   }
 
   \item{
-    Making what can seem like minor changes to the pipeline definition can require more integration time.
+    Making what can seem like minor changes to the pipeline definition can require much integration time.
     Examples of pipeline changes that affect the pipeline execution configuration and verification tests:
 
     \begin{itemize}
@@ -297,7 +297,7 @@ after running the \texttt{demo.sh} on both the cluster head node (\texttt{lsst-d
 
     \item{
       Table \ref{tab:count} list all release data products per tract.
-      For each product, we provide the expected number of files to be generated (where available) and the number of files gneerated in practice.
+      For each product, we provide the expected number of files to be generated (where available) and the number of files generated in practice.
       Each of these files was checked to ensure that it contained some data (i.e., the size of the file was non-zero).}
 
     \item{
@@ -371,6 +371,7 @@ None.
 
   \item{
     The Verification Cluster can be very busy making it difficult to acquire nodes to do the test work (both initial configuration test and actual full test).
+        A production reservation was added to Slurm to support the test execution.
   }
 
   \item{
