@@ -14,15 +14,17 @@
 \setDocDate{\vcsdate}
 \setDocUpstreamLocation{\url{https://github.com/lsst/lsst-texmf/examples}}
 \author{% `git log --pretty=%an | sort --key=2 | uniq` ?
+  Jim Bosch,
   Hsin-Fang Chiang,
   Michelle Gower,
   Mikolaj Kowalik,
+  Timothy Morton,
   John D. Swinbank
 }
 
 % Most recent last
 \setDocChangeRecord{
-\addtohist{1}{2017-11-30}{Initial version.}{Chiang, Gower, Kowalik, Swinbank.}
+\addtohist{1}{2017-12-XX}{Initial version.}{Swinbank.}
 }
 
 \setDocCurator{John D. Swinbank}
@@ -61,7 +63,6 @@ test cases:
   \item[DRP-00-05]{Execution of the DRP Science Payload by the Batch Production Service}
   \item[DRP-00-10]{Data Release Includes Required Data Products}
   \item[DRP-00-15]{Scientific Verification of Source Catalog}
-  \item[DRP-00-20]{Scientific Verification of Forced Source Catalog}
   \item[DRP-00-25]{Scientific Verification of Object Catalog}
   \item[DRP-00-30]{Scientific Verification of Processed Visit Images}
   \item[DRP-00-35]{Scientific Verification of Coadd Images}
@@ -129,7 +130,7 @@ At the time of test execution, the VC provided 48 Dell C6320 nodes, each with 24
 \label{sect:swconf}
 
 All systems used for testing --- including both \texttt{lsst-dev01} and the VC nodes --- were running CentOS Linux release 7.4.1708.
-The \texttt{devtoolset-6}\footnote{\url{https://access.redhat.com/documentation/en-us/red_hat_developer_toolset/6/html/6.0_release_notes/}} toolchain, including GCC\footnote{\url{https://gcc.gnu.org/}} version 6.3.1, was enabled throughout these tests.
+The \texttt{devtoolset-6}\footnote{\url{https://access.redhat.com/documentation/en-us/red_hat_developer_toolset/6/html/6.0_release_notes/}} toolchain, including GCC\footnote{\url{https://gcc.gnu.org/}} version 6.3.1, was enabled for all tests, with the exception DRP-00-00 for reasons described in \S\ref{sect:problems-drp-00-00}.
 
 \subsection{Input Data}
 \label{sect:inputdata}
@@ -144,7 +145,7 @@ Test case DRP-00-00 was executed by John Swinbank (University of Washington).
 
 Test case DRP-00-05 was executed by Hsin-Fang Chiang (NCSA), Michelle Gower (NCSA), Mikolaj Kowalik (NCSA), Greg Daues (NCSA) and Rob Kooper (NCSA).
 
-Test cases DRP-00-10, DRP-00-15, DRP-00-20, DRP-00-25, DRP-00-30 and DRP-00-35 were executed by Jim Bosch (Princeton), Lauren MacArthur (Princeton) and Tim Morton (Princeton).
+Test cases DRP-00-10, DRP-00-15, DRP-00-25, DRP-00-30 and DRP-00-35 were executed by Jim Bosch (Princeton), Lauren MacArthur (Princeton) and Tim Morton (Princeton).
 
 \newpage
 
@@ -156,28 +157,25 @@ Test cases DRP-00-10, DRP-00-15, DRP-00-20, DRP-00-25, DRP-00-30 and DRP-00-35 w
 
 \begin{longtable} {|p{0.2\textwidth}|p{0.2\textwidth}|p{0.6\textwidth}|}\hline
 {\bf TEST CASE ID} & {\bf PASS/FAIL} & {\bf COMMENTS} \\\hline
-DRP-00-00 & pass & comment \\\hline
-DRP-00-05 & pass & Refer to \S\ref{sect:detailed}. \\\hline
-DRP-00-10 & pass/fail & comment \\\hline
-DRP-00-15 & pass/fail & comment \\\hline
-DRP-00-20 & pass/fail & comment \\\hline
-DRP-00-25 & pass/fail & comment \\\hline
-DRP-00-30 & pass/fail & comment \\\hline
-DRP-00-35 & pass/fail & comment \\\hline
+DRP-00-00 & Pass & Refer to \S\ref{sect:detail-drp-00-00}. \\\hline
+DRP-00-05 & Pass & Refer to \S\ref{sect:detail-drp-00-05}. \\\hline
+DRP-00-10 & Pass & Refer to \S\ref{sect:detail-drp-00-10}. \\\hline
+DRP-00-15 & Pass & Refer to \S\ref{sect:detail-drp-00-15}. \\\hline
+DRP-00-25 & Partial Pass & An issue was identified when comparing the aperture corrections generated for different photometry algorithms. Refer to \S\ref{sect:detail-drp-00-25}. \\\hline
+DRP-00-30 & Pass & Refer to \S\ref{sect:detail-drp-00-30}. \\\hline
+DRP-00-35 & Pass & Refer to \S\ref{sect:detail-drp-00-35}. \\\hline
 \end{longtable}
 
-\subsection{Overall Assessment \label{sect:overallassessment}}
-\begin{itemize}
-\item Provide an overall assessment of the software as demonstrated by the test results in this report
-\item Identify any remaining deficiencies, limitations or constraints that were detected by the testing performed
-\item For each remaining deficiency, limitation or constraint describe:
-\begin{itemize}
-\item Its impact on software and system performance, including identification of requirements not met
-\item The impact on software and system design to correct it
-\item A recommended solution/approach for correcting it
-\item Mantis issue
-\end{itemize}
-\end{itemize}
+\subsection{Overall Assessment}
+\label{sect:overallassessment}
+
+All but one test cases were completely passed.
+This successfully demonstrated the ability to install the LSST Science Pipelines on a production system, to perform at-scale data processing using existing execution middleware, to generate scientifically meaningful results, and to check those results for validity.
+
+A single test case was recorded as a partial pass.
+This was due to a discrepancy in the aperture corrections being calculated for different photometric algorithms.
+This is not regarded as fundamental to the goals of the LDM-503-2 milestone.
+However, investigation of this issue has been ticketed as \jira{DM-13058}, and will be scheduled as part of upcoming development work.
 
 \subsection{Impact of Test Environment}
 \label{sect:impact}
@@ -271,12 +269,20 @@ mentioned in the previous item).
 
 At the time of writing, the long term execution framework for LSST processing has not yet been selected; we note that it may make sense only to implement these improvements to DESDM if it is ultimately chosen for this role.
 
+\subsubsection{Scientific Analysis}
+
+Most of the analysis performed in support of the DRP-00-10 through DRP-00-35 milestones was based on manual inspection of pregenerated plots.
+In future, much of this could be automated by means of specific numerical thresholds which must be crossed to trigger manual intervention.
+This is especially significant for those tests which involve inspecting visit images and source catalogues; there are many more of these than there are objects and coadd images.
+Work to devise the appropriate metrics is scheduled as \jira{DM-11312}.
+
 \newpage
 
 \section{Detailed Test Results}
 \label{sect:detailed}
 
 \subsection{DRP-00-00}
+\label{sect:detail-drp-00-00}
 
 The string \texttt{Ok} was returned when executing
 
@@ -286,8 +292,8 @@ The string \texttt{Ok} was returned when executing
 
 after running the \texttt{demo.sh} on both the cluster head node (\texttt{lsst-dev01}) and on an example compute node.
 
-
 \subsection{DRP-00-05}
+\label{sect:detail-drp-00-05}
 
 \begin{enumerate}
 
@@ -347,11 +353,117 @@ after running the \texttt{demo.sh} on both the cluster head node (\texttt{lsst-d
   }
 \end{enumerate}
 
+\subsection{DRP-00-10}
+\label{sect:detail-drp-00-10}
+
+The week 44 reprocessing of the Hyper Suprime-Cam RC1 dataset was used to execute this test case.
+Details of this reprocessing---including failures, which are acceptable per the test specification---are available at \jira{DM-12388}.
+All expected products were found to exist.
+
+\subsection{DRP-00-15}
+\label{sect:detail-drp-00-15}
+
+The week 44 reprocessing of the Hyper Suprime-Cam RC1 dataset was used to execute this test case.
+Details of this reprocessing---including failures, which are acceptable per the test specification---are available at \jira{DM-12388}.
+
+Scientific assessment was carried out using the \texttt{qa-image-browser.ipynb} Jupyter notebook, made available from \url{https://github.com/lsst-dm/pipe_analysis/}.
+The version of the notebook from commit \texttt{8705ef7} was used.
+
+All plots produced by that notebook were scrutinized by the test team.
+It was noted that:
+
+\begin{itemize}
+
+  \item{When comparing aperture corrections across photometry algorithms, some scatter was observed at the bright end and that the narrow-band (NB9021) observations had more outliers than others.
+    \begin{itemize}
+      \item{This was assessed as falling within normal tolerances, and no further action is required.}
+    \end{itemize}
+  }
+
+  \item{When comparing photometric measurements with the reference catalog, a significant (20 mmag) offset was observed in tracts 8766 and 8767 in the R band.
+    \begin{itemize}
+      \item{This offset is regarded as falling within normal tolerances, but worthy of further investigation.}
+      \item{Ticket \jira{DM-13056} has been filed.}
+    \end{itemize}
+  }
+
+  \item{When comparing astrometric measurements with the reference catalog, a small but systematic offset was observed in tracts 8766 and 8767 in the I band, and in tract 9813 in the R band.
+    \begin{itemize}
+      \item{This offset is regarded as falling within normal tolerances, but worthy of further investigation.}
+      \item{Ticket \jira{DM-13057} has been filed.}
+    \end{itemize}
+  }
+
+\end{itemize}
+
+The test team agreed that all measurements fall within acceptable tolerances, and therefore regard the test case as having been passed.
+\jira{DM-13056} and \jira{DM-13057} will be scheduled for further investigation as part of the regular development cycle.
+
+\subsection{DRP-00-25}
+\label{sect:detail-drp-00-25}
+
+The input dataset and analysis tools used for this test case were the same as for DRP-00-15 (see \S\ref{sect:detail-drp-00-15}).
+
+The test team agreed that:
+
+\begin{itemize}
+
+  \item{PSF models correctly predict the ellipticities of stars over the field of view.}
+  \item{Photometric and astrometric measurements are consistent with reference catalogs.}
+  \item{Forced and unforced measurements are consistent.}
+  \item{The slope of the stellar locus appears appropriate.}
+
+\end{itemize}
+
+However, aperture corrections were not found to be consistent between photometry algorithms when performing forced measurement.
+This inconsistency was outside acceptable tolerances, and has been ticketed for further investigation as \jira{DM-13058}.
+
+This test case is regarded as ``partially passed'': its overall goal has been accomplished, but understanding the origin of the inconsistent aperture corrections will require further work which will be undertaken during the upcoming developing cycle.
+
+\subsection{DRP-00-30}
+\label{sect:detail-drp-00-30}
+
+The input dataset used for this test case was the same as for DRP-00-15 (see \S\ref{sect:detail-drp-00-15}).
+
+The test was carried out as described.
+All required artifacts were accessible.
+Data was inspected by the Data Release Production Science Lead, who certified that artifacts were correctly matched and that backgrounds were not over-subtracted.
+
+This test case is passed.
+
+
+
+
+\subsection{DRP-00-35}
+\label{sect:detail-drp-00-35}
+
+The input dataset used for this test case was the same as for DRP-00-15 (see \S\ref{sect:detail-drp-00-15}).
+
+The test was carried out as described.
+All required artifacts were accessible.
+Data was inspected by the Data Release Production Science Lead, who certified that artifacts were correctly matched, satellite trails and ghosts were properly rejected, and that backgrounds were not over-subtracted.
+
+It was noted that:
+
+\begin{itemize}
+
+  \item{We note that the background model is stored separately from the image, but is readily accessible;}
+  \item{
+    Pixels marked as contaminated by cosmic rays that had been successfully interpolated were not being included in the coadd, unnecessarily making much of the coadd unusable for precision science.
+    This issue had already been identified and ticketed as \jira{DM-9953}; it has subsequently been resolved.
+  }
+
+\end{itemize}
+
 \subsubsection{Problems encountered}
 
 \paragraph{DRP-00-00}
+\label{sect:problems-drp-00-00}
 
-None.
+Per \S\ref{sect:swconf}, the initial attempt to execute this test case was based on the \texttt{devtoolset-6} toolchain, as is current LSST best practice.
+However, although the code executed without error, the numerical values recorded did not fall within the expected tolerances.
+This is due to a known compatibility issue between the version 14.0 release of the Pipelines and \texttt{devtoolset-6} which was fixed on \jira{DM-10902}.
+The test was repeated without \texttt{devtoolset-6} enabled and was then completed successfully.
 
 \paragraph{DRP-00-05}
 \label{sect:problems-drp-00-05}
@@ -386,6 +498,34 @@ None.
   }
 \end{itemize}
 
+\paragraph{DRP-00-10}
+\label{sect:problems-drp-00-10}
+
+An initial attempt was made to execute this test case based on the week 46 reprocessing of the Hyper Suprime-Cam ``RC'' dataset\footnote{Refer to \jira{DM-12811} and \url{https://confluence.lsstcorp.org/display/DM/Reprocessing+of+the+HSC+RC+dataset}.}.
+However an (independently discovered) bug in the version of the code used to process this data rendered it unusable for these tests.
+The bug was captured as \jira{DM-12882} and has subsequently been resolved.
+For the purpose of executing this test case (and others which depend upon in), the week 44 reprocessing\footnote{See \jira{DM-12388}.} was used instead.
+
+\paragraph{DRP-00-15}
+\label{sect:problems-drp-00-15}
+
+None.
+
+\paragraph{DRP-00-25}
+\label{sect:problems-drp-00-25}
+
+None.
+
+\paragraph{DRP-00-30}
+\label{sect:problems-drp-00-30}
+
+None.
+
+\paragraph{DRP-00-35}
+\label{sect:problems-drp-00-35}
+
+None.
+
 \subsubsection{Deviations from test cases/procedures}
 
 \paragraph{DRP-00-00}
@@ -406,6 +546,26 @@ None.
 	time.
   }
 \end{itemize}
+
+\paragraph{DRP-00-10}
+
+None.
+
+\paragraph{DRP-00-15}
+
+None.
+
+\paragraph{DRP-00-25}
+
+None.
+
+\paragraph{DRP-00-30}
+
+None.
+
+\paragraph{DRP-00-35}
+
+None.
 
 \appendix
 
