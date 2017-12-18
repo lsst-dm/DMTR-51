@@ -1,240 +1,579 @@
 \documentclass[DM,lsstdraft,STR,toc]{lsstdoc}
+\input meta.tex
 
 \begin{document}
 
-%set the WP number or product here for the requirements
+\def\milestoneName{HSC Reprocessing}
+\def\milestoneId{LDM-503-2}
 \def\product{LSST Level 2 System}
 
 \setDocCompact{true}
 
-%Product name first in title
-\title    [TR for \product]
-                    {\color[rgb]{0.16,0.42,0.57} \sf \product ~ Test Report}
-\setDocRef      {TR-XXXXXX} % the reference code
-\setDocDate     {\today}              % the date of the issue
+\title[\milestoneId{}~Test Report]{\milestoneId{} (\milestoneName{})~Test Report}
+\setDocRef{\lsstDocType-\lsstDocNum}
+\setDocDate{\vcsdate}
 \setDocUpstreamLocation{\url{https://github.com/lsst/lsst-texmf/examples}}
-
-\author   {}
-
-% Comment out the setLSSTDU if you do not want it do not set it to Blanck
-
-%
-% a short abstract
-%
-\setDocAbstract {This is a template for the Test Report for \product. It renders findings and results
-from test controls.}
-
-%
-% the title page
-%
-\maketitle
-
-%
-%	Revision history MOST RECENT FIRST
-%
-
-\setDocChangeRecord{%
-\addtohist{1.0}{2017-11-30}{Initial version.} {}
+\author{% `git log --pretty=%an | sort --key=2 | uniq` ?
+  Jim Bosch,
+  Hsin-Fang Chiang,
+  Michelle Gower,
+  Mikolaj Kowalik,
+  Timothy Morton,
+  John D. Swinbank
 }
 
+% Most recent last
+\setDocChangeRecord{
+\addtohist{1}{2017-12-XX}{Initial version.}{Swinbank.}
+}
 
-\section{Introduction \label{sect:intro}}
+\setDocCurator{John D. Swinbank}
+\setDocUpstreamLocation{\url{https://github.com/lsst-dm/\lsstDocType-\lsstDocNum}}
+\setDocUpstreamVersion{\vcsrevision}
 
-\subsection{Objectives \label{sect:objectives}}
-This section shall describe the objectives of the report, viz. document the testing activities that were carried out against the STP and STS, assessment of the software tested, etc.
 
-\subsection{Scope \label{sect:scope}}
-The general ambit of \product testing is defined in \citell{LDM-503}.\\ Specific scope of the test campaign that this report documents
-should be described in this section.
+\setDocAbstract{
+This is the test report for \milestoneId{} (\milestoneName{}), an LSST DM level 2 milestone pertaining to the \product{}.
+}
 
-\subsection{System Overview \label{sect:systemoverview}}
-This paragraph shall briefly states the purpose of the system and the software to which this document applies.
-It shall describe the general nature of the system and software; summarize the history of system development, operation
-and maintenance.
-A summary of the software functionality,  software configuration , its  operational environment and its external interfaces can be provided.
+\maketitle
 
-\subsection{Applicable Documents \label{sect:appdocs}}
+\section{Introduction}
+\label{sect:intro}
+
+\subsection{Objectives}
+\label{sect:objectives}
+
+This document describes the results of tests carried out in late (calendar) 2017 on the \product{} in order to assess progress against the LSST DM level 2 milestone \milestoneId{}.
+We report on the success or failure of applicable test cases and assess the state of the software and services tested.
+
+\subsection{Scope}
+\label{sect:scope}
+
+The overall test plan for the LSST Data Management system is described in \citeds{LDM-503}.
+This document specifically refers to the late (calendar) 2017 milestone \milestoneId{}, which tests the \product{}.
+The overall \product{} test specification is defined in \citeds{LDM-534}.
+The test plan for \milestoneId{} involves the execution of the entire DRP-00
+(Small Scale Data Release Processing) specification, including the following
+test cases:
+
+\begin{description}
+
+  \item[DRP-00-00]{Installation of the Data Release Production science payload}
+  \item[DRP-00-05]{Execution of the DRP Science Payload by the Batch Production Service}
+  \item[DRP-00-10]{Data Release Includes Required Data Products}
+  \item[DRP-00-15]{Scientific Verification of Source Catalog}
+  \item[DRP-00-25]{Scientific Verification of Object Catalog}
+  \item[DRP-00-30]{Scientific Verification of Processed Visit Images}
+  \item[DRP-00-35]{Scientific Verification of Coadd Images}
+
+\end{description}
+
+\subsection{System Overview}
+\label{sect:systemoverview}
+
+The \product{} is that part of the LSST Data Management system which will be responsible for scheduled, periodic data processing during LSST operations.
+The most prominent example of such processing is the generation of LSST's annual releases of both catalog and image data.
+However, the \product{} is also responsible for the generation of template images (used in the nightly processing system) and calibration products (used in both nightly and annual processing), and for the Level 2 Quality Control Service (\citeds{LDM-148}).
+The \milestoneId{} milestone focuses only on the data release production part of the system.
+
+Note that we may broadly think of the \product{} as consisting of two independent parts: the Batch Production Service, which provides scheduling and workflow services, and the Science Payloads, which contain the algorithmic content.
+The \milestoneId{} milestone exercises both parts of the system.
+
+\subsection{Applicable Documents}
+\label{sect:appdocs}
 \addtocounter{table}{-1}
 
 \begin{tabular}[htb]{l l}
-\citeds{LDM-534} & \product Testing Specification\\
-\citeds{LDM-503}& DM Test Plan\\
-\citeds{LDM-294}& LSST DM Project Management Plan\\
+\citeds{LDM-294} & LSST DM Project Management Plan\\
+\citeds{LDM-503} & DM Test Plan\\
+\citeds{LDM-534} & \product{} Test Specification\\
 \end{tabular}
 
-\subsection{References\label{sect:references}}
+\subsection{References}
+\label{sect:references}
 
 \renewcommand{\refname}{}
 \bibliography{lsst,refs,books,refs_ads}
 
-\subsection{Definitions, acronyms, and abbreviations \label{sect:acronyms}} % include acronyms.tex generated by the acronyms.csh (GaiaTools)
-%\input{acronyms}
+\subsection{Document Overview}
+\label{sect:docoverview}
 
-\subsection{Document Overview \label{sect:docoverview}}
-This section shall describe the contents of the document and explains how the rest of the report is organized.
+Section \ref{sect:configuration} of this document provides details of the \product{} baseline used for this test, including relevant hardware and software configurations.
+Section \ref{sect:personnel} lists the individuals involved in performing the tests.
+Section \ref{sect:overview} provides an overview of the test results, while Section \ref{sect:detailed} provides more detailed results from each individual test case.
 
-%----------------------------------------------------
-% TEST CONFIGURATION - baseline
-%----------------------------------------------------
-\section{Test Configuration \label{sect:configuration}}
-This section shall contain a full identification of the hardware and the software to which this document applies, providing
-the \product  baseline.\\
-Additionally, this paragraph shall also document the documents, input data description, software requirements, interface requirements and/or ICDs and coding
-standards that the tests use or follow.\\
-Reference to where all software used and input and output data can be retrieved, if needed again, should be provided.
-\subsection{Documents \label{sect:docsconf}}
-Specify the documents composing the baseline for which we are testing against. Especially it is important to provide the  issue
-and revision numbers of the Software Testing Specification document.
-\subsection{Software \label{sect:swconf}}
-Specify the characteristics and configuration of the software that was run during the execution of the tests. This may include
-system software as operating systems, compilers, etc.
-\subsection{Hardware \label{sect:hwconf}}
-Specify the characteristics and configuration of the hardware required to execute the tests.
-\subsection{Input Data \label{sect:inputdata}}
-Specify the baseline of the input data used.
+\section{Test Configuration}
+\label{sect:configuration}
 
-%--------------------------------------------------
-% PERSONNEL
-%--------------------------------------------------
-\section{Personnel \label{sect:personnel}}
-This paragraph shall specify the personnel participating in the testing activities reported in the document and their
-roles or responsibilities.
+\subsection{Documents}
+
+This test report refers to the execution of tests DRP-00-00 through DRP-00-35 in \citeds{LDM-534}.
+
+\begin{note}
+At time of writing, LDM-534 has not been baselined, so a detailed version
+number is not available.
+\end{note}
+
+\subsection{Hardware}
+\label{sect:hwconf}
+
+All tests were executed on systems in the LSST Data Facility.
+
+Software installation (DRP-00-00) and scientific analysis work (DRP-00-10 through DRP-00-35) were carried out on \texttt{lsst-dev01.ncsa.illinois.edu}.
+At time of text execution, this was a Dell PowerEdge R730 with 24 physical Intel Xeon E5-2690v3 CPU cores at 2.60\,GHz and 256\,GB of RAM.
+
+Bulk data processing (DRP-00-05) was carried out on the LSST Verification Cluster (VC).
+At the time of test execution, the VC provided 48 Dell C6320 nodes, each with 24 physical Intel Xeon E5-2680v3 CPU cores at 2.50\,GHz and 128\,GB of RAM.
+
+\subsection{Software}
+\label{sect:swconf}
+
+All systems used for testing --- including both \texttt{lsst-dev01} and the VC nodes --- were running CentOS Linux release 7.4.1708.
+The \texttt{devtoolset-6}\footnote{\url{https://access.redhat.com/documentation/en-us/red_hat_developer_toolset/6/html/6.0_release_notes/}} toolchain, including GCC\footnote{\url{https://gcc.gnu.org/}} version 6.3.1, was enabled for all tests, with the exception DRP-00-00 for reasons described in \S\ref{sect:problems-drp-00-00}.
+
+\subsection{Input Data}
+\label{sect:inputdata}
+
+Input data for all tests was based on the Hyper Suprime-Cam “RC1” dataset, as described in the appendix to \citeds{LDM-534}.
+Calibration dataset 20170105 was used, defined as per \citeds{DMTR-31}.
+
+\section{Personnel}
+\label{sect:personnel}
+
+Test case DRP-00-00 was executed by John Swinbank (University of Washington).
+
+Test case DRP-00-05 was executed by Hsin-Fang Chiang (NCSA), Michelle Gower (NCSA), Mikolaj Kowalik (NCSA), Greg Daues (NCSA) and Rob Kooper (NCSA).
+
+Test cases DRP-00-10, DRP-00-15, DRP-00-25, DRP-00-30 and DRP-00-35 were executed by Jim Bosch (Princeton), Lauren MacArthur (Princeton) and Tim Morton (Princeton).
 
 \newpage
 
-%--------------------------------------------------
-% OVERVIEW OF THE TEST RESULTS
-%--------------------------------------------------
-\section{Overview of the Test Results \label{sect:overview}}
-\subsection{Summary Table \label{sect:summarytable}}
-The following table shall summarize, among others, the completion status of each test case.\\
+\section{Overview of the Test Results}
+\label{sect:overview}
 
-% The table should follow this template for the traceability scripts retrieve the information correctly
+\subsection{Summary Table}
+\label{sect:summarytable}
+
 \begin{longtable} {|p{0.2\textwidth}|p{0.2\textwidth}|p{0.6\textwidth}|}\hline
 {\bf TEST CASE ID} & {\bf PASS/FAIL} & {\bf COMMENTS} \\\hline
-DRP-00-00 & pass/fail & comment \\\hline
-DRP-00-05 & pass/fail & comment \\\hline
-DRP-00-10 & pass/fail & comment \\\hline
-DRP-00-15 & pass/fail & comment \\\hline
-DRP-00-20 & pass/fail & comment \\\hline
-DRP-00-25 & pass/fail & comment \\\hline
-DRP-00-30 & pass/fail & comment \\\hline
-DRP-00-35 & pass/fail & comment \\\hline
+DRP-00-00 & Pass & Refer to \S\ref{sect:detail-drp-00-00}. \\\hline
+DRP-00-05 & Pass & Refer to \S\ref{sect:detail-drp-00-05}. \\\hline
+DRP-00-10 & Pass & Refer to \S\ref{sect:detail-drp-00-10}. \\\hline
+DRP-00-15 & Pass & Refer to \S\ref{sect:detail-drp-00-15}. \\\hline
+DRP-00-25 & Partial Pass & An issue was identified when comparing the aperture corrections generated for different photometry algorithms. Refer to \S\ref{sect:detail-drp-00-25}. \\\hline
+DRP-00-30 & Pass & Refer to \S\ref{sect:detail-drp-00-30}. \\\hline
+DRP-00-35 & Pass & Refer to \S\ref{sect:detail-drp-00-35}. \\\hline
 \end{longtable}
 
+\subsection{Overall Assessment}
+\label{sect:overallassessment}
 
-\subsection{Overall Assessment \label{sect:overallassessment}}
+All but one test cases were completely passed.
+This successfully demonstrated the ability to install the LSST Science Pipelines on a production system, to perform at-scale data processing using existing execution middleware, to generate scientifically meaningful results, and to check those results for validity.
+
+A single test case was recorded as a partial pass.
+This was due to a discrepancy in the aperture corrections being calculated for different photometric algorithms.
+This is not regarded as fundamental to the goals of the LDM-503-2 milestone.
+However, investigation of this issue has been ticketed as \jira{DM-13058}, and will be scheduled as part of upcoming development work.
+
+\subsection{Impact of Test Environment}
+\label{sect:impact}
+
+The DRP-00-05 test was performed --- as per its specification --- using the DESDM framework, as described in \citeds{DMTN-059}.
+The DESDM system is still under evaluation for use within LSST data processing, and may not be deployed during operations.
+The results of this test therefore establish a baseline system, rather than testing a true operational deployment.
+
+\subsection{Recommended Improvements}
+\label{sect:recommendations}
+
+\subsubsection{Operational}
+
 \begin{itemize}
-\item Provide an overall assessment of the software as demonstrated by the test results in this report
-\item Identify any remaining deficiencies, limitations or constraints that were detected by the testing performed
-\item For each remaining deficiency, limitation or constraint describe:
+
+  \item{
+    For \milestoneId{}, some tests were carried out manually through spot checks.
+    Further development of verification tools to perform these and additional checks is needed.
+  }
+
+  \item{
+    The handoff process from Pipelines to the Data Facility needs to be improved.
+    Improvements include providing details about changes in the codebase.
+    Currently the operator is digging through \texttt{pipe{\_}drivers} code to figure out some of these details in addition to repeatedly consulting pipeline developers.
+    Providing change details during handoff will not only speed up configuring and executing the pipeline, but will also provide the information needed to configure the verification tests themselves.
+    The Data Facility should provide a first proposal on what information they would like provided.
+  }
+
+  \item{
+    Making what can seem like minor changes to the pipeline definition can require much integration time.
+    Examples of pipeline changes that affect the pipeline execution configuration and verification tests:
+
+    \begin{itemize}
+
+      \item{Pipeline code changes or task configuration changes can alter the required input files or what output files are created.}
+      \item{Changing what pipeline steps should be executed may require a pipeline task configuration change in addition to modifying the overall pipeline definition.}
+
+    \end{itemize}
+
+    One of the goals of the new Butler and SuperTask effort is to minimize the amount of integration effort.
+    When running the exact same configuration as the developer, the new Butler and SuperTask effort could definitely help.
+    However, it is not yet clear how much integration/configuration effort will still be required with the new Butler+SuperTask if the operator wishes to run something different than the default pipeline configuration.
+  }
+
+  \item{
+    At the time of this test, it is not yet understood exactly how the Data Facility would configure the execution of the pipeline for best scalability and management.
+    This execution may not match small-scale developer tests where getting individual results faster is more important.
+    The desire is to have the test match the expected release campaign execution configuration
+  as much as possible.
+    As work is done on both the pipeline science and the Batch Processing Service, effort should be undertaken to determine the release campaign execution configuration.
+  }
+
+\end{itemize}
+
+\subsubsection{Infrastructure}
+
+Problems with the Verification Cluster infrastructure were encountered during the execution of DRP-00-05 as described in \S\ref{sect:problems-drp-00-05}.
+These problems may be mitigated by increasing the scratch storage space available on the cluster and adding dedicated production job queues to the Slurm system (\jira{IHS-612}) for future tests.
+
+\subsubsection{DESDM Execution Framework}
+
+A number of improvements to the DESDM framework are suggested by this work.
+These include:
+
 \begin{itemize}
-\item Its impact on software and system performance, including identification of requirements not met
-\item The impact on software and system design to correct it
-\item A recommended solution/approach for correcting it
-\item Mantis issue
-\end{itemize}
+  \item{
+    The step in DESDM framework which configures each step for each compute job does not scale well at the size of the larger tract.
+    In DESDM Operations the unit of work in a single submission is smaller, so this has not been an issue there.
+    For short term use, this code could be profiled to see if there are straight forward ways to speed it up.
+  }
+
+  \item{
+    In DESDM Operations, the single submission's unit of work is chosen to be the amount of work the operator is willing to start over from the beginning.
+    In this test, this unit of work is tract using the current operational configuration of the pipeline.
+    Restarting a tract from the very beginning adds a lot of extra compute time and resources to complete the test (especially when including the scaling issue
+mentioned in the previous item).
+    Short term solutions include modifying operational configuration of the pipeline to make smaller units of work (which currently means human overhead in managing more submissions).
+    Also, DESDM allows for manually starting a pipeline execution using outputs in the Data Backbone from a previous submission.
+    But this requires an operational pipeline configuration change which takes human knowledge, effort and time.
+  }
+
+  \item{
+    The workflow definition (wcl) that describes a pipeline to the DESDM framework includes how to name output files.
+    These naming patterns need to match the manually-made Butler policies.
+    For this test, this was done manually and was very error-prone.
+    Until this issue is resolved by the Batch Processing Service integrating
+    updated DM Middleware (following \citeds{LDM-556}), modifying the DESDM framework to automatically create the Butler policy file from the pipeline definition would speed up the integration process.
+  }
+
 \end{itemize}
 
-\subsection{Impact of Test Environment \label{sect:impact}}
-This paragraph shall provide an assessment of the manner in which the test environment may be different from the
-operational environment and the effect of this difference on the test results.
+At the time of writing, the long term execution framework for LSST processing has not yet been selected; we note that it may make sense only to implement these improvements to DESDM if it is ultimately chosen for this role.
 
-\subsection{Recommended Improvements \label{sect:recommendations}}
-This section shall provide any recommended improvement in the design, operation or testing of the software tested. A discussion
-of each recommendation and its impact on the software may be provided.
+\subsubsection{Scientific Analysis}
+
+Most of the analysis performed in support of the DRP-00-10 through DRP-00-35 milestones was based on manual inspection of pregenerated plots.
+In future, much of this could be automated by means of specific numerical thresholds which must be crossed to trigger manual intervention.
+This is especially significant for those tests which involve inspecting visit images and source catalogues; there are many more of these than there are objects and coadd images.
+Work to devise the appropriate metrics is scheduled as \jira{DM-11312}.
 
 \newpage
 
-\section{Detailed Test Results \label{sect:detailed}}
-This section describes more in detail the results of those test cases that are failed or need a more detailed revision.
-\subsection{[TEST-ID]}
-\subsubsection{Summary of test results}
-This paragraph shall summarize the results of the test. When the completion status of the test is not 'PASS', this section
-shall reference the following paragraphs for details.
+\section{Detailed Test Results}
+\label{sect:detailed}
 
-\paragraph{[DRP-00-05]}
+\subsection{DRP-00-00}
+\label{sect:detail-drp-00-00}
+
+The string \texttt{Ok} was returned when executing
+
+\begin{verbatim}
+  $ python bin/compare expected/Linux64/detected-sources.txt
+\end{verbatim}
+
+after running the \texttt{demo.sh} on both the cluster head node (\texttt{lsst-dev01}) and on an example compute node.
+
+\subsection{DRP-00-05}
+\label{sect:detail-drp-00-05}
+
+\begin{enumerate}
+
+  \item{Check the existence of the expected files: PASSED}
+
+  \begin{enumerate}
+
+    \item{
+      Table \ref{tab:count} list all release data products per tract.
+      For each product, we provide the expected number of files to be generated (where available) and the number of files generated in practice.
+      Each of these files was checked to ensure that it contained some data (i.e., the size of the file was non-zero).}
+
+    \item{
+      To verify the physical location of files on the filesystem match the location information tracked in the Data Backbone database tables, we used the tool
+	  \texttt{compare{\_}db.py} from the DESDM \texttt{FileMgmt} package.
+      Paths, file sizes, and checksums (MD5) were compared.
+      The test results were that both the database and filesystem matched with 50656 files in tract 8766, 52041 files in tract 8767, and 273375 files in tract 9813.
+    }
+  \end{enumerate}
+
+  \item{
+    Check existence of the expected metadata: PASSED\\
+    The following metadata is expected to have been saved
+
+    \begin{itemize}
+      \item{calexp: tract, visit, filter, ccd}
+      \item{deepCoadd\_calexp: tract, patch, filter}
+    \end{itemize}
+
+    It was verified that the above mentioned metadata had non-NULL values stored for the data products in the Data Backbone database tables.
+  }
+
+  \item{
+    Check existence of the expected provenance: PASSED
+
+    \begin{enumerate}
+      \item{For each file, the provenance system was checked to ensure that there were no:
+
+        \begin{enumerate}
+          \item{Missing direct association of output files with the processing attempt;}
+          \item{Missing ``was-generated-by'' association (per the Open Provenance Model, \cite{soton271449});}
+          \item{Instances in which the  ``was-generated-by'' association did
+          not belong to the specificed processing attempt.}
+        \end{enumerate}
+      }
+
+      \item{Via manual spot checks, it was verified that information linking input files to each step was saved to the Data Backbone database tables.}
+    \end{enumerate}
+  }
+
+  \item{Check (existence) runtime metrics: PASSED
+
+    \begin{enumerate}
+      \item{Table \ref{tab:runtime} shows wall-clock time for running the entire pipeline for each tract and total cpu time per execution.}
+      \item{Table \ref{tab:runtimeExec} provides details of execution time and memory usage at a per-process level.}
+    \end{enumerate}
+  }
+\end{enumerate}
+
+\subsection{DRP-00-10}
+\label{sect:detail-drp-00-10}
+
+The week 44 reprocessing of the Hyper Suprime-Cam RC1 dataset was used to execute this test case.
+Details of this reprocessing---including failures, which are acceptable per the test specification---are available at \jira{DM-12388}.
+All expected products were found to exist.
+
+\subsection{DRP-00-15}
+\label{sect:detail-drp-00-15}
+
+The week 44 reprocessing of the Hyper Suprime-Cam RC1 dataset was used to execute this test case.
+Details of this reprocessing---including failures, which are acceptable per the test specification---are available at \jira{DM-12388}.
+
+Scientific assessment was carried out using the \texttt{qa-image-browser.ipynb} Jupyter notebook, made available from \url{https://github.com/lsst-dm/pipe_analysis/}.
+The version of the notebook from commit \texttt{8705ef7} was used.
+
+All plots produced by that notebook were scrutinized by the test team.
+It was noted that:
+
 \begin{itemize}
-\item
-\begin{note}
-Data Facility to provide content.
-\end{note}
+
+  \item{When comparing aperture corrections across photometry algorithms, some scatter was observed at the bright end and that the narrow-band (NB9021) observations had more outliers than others.
+    \begin{itemize}
+      \item{This was assessed as falling within normal tolerances, and no further action is required.}
+    \end{itemize}
+  }
+
+  \item{When comparing photometric measurements with the reference catalog, a significant (20 mmag) offset was observed in tracts 8766 and 8767 in the R band.
+    \begin{itemize}
+      \item{This offset is regarded as falling within normal tolerances, but worthy of further investigation.}
+      \item{Ticket \jira{DM-13056} has been filed.}
+    \end{itemize}
+  }
+
+  \item{When comparing astrometric measurements with the reference catalog, a small but systematic offset was observed in tracts 8766 and 8767 in the I band, and in tract 9813 in the R band.
+    \begin{itemize}
+      \item{This offset is regarded as falling within normal tolerances, but worthy of further investigation.}
+      \item{Ticket \jira{DM-13057} has been filed.}
+    \end{itemize}
+  }
+
 \end{itemize}
 
-\subsubsection{Problems encountered}
-\paragraph{[TEST-CASE-ID]}
-This paragraph shall identify by their unique identification, the test cases in which one or more problems occurred, and shall provide:
+The test team agreed that all measurements fall within acceptable tolerances, and therefore regard the test case as having been passed.
+\jira{DM-13056} and \jira{DM-13057} will be scheduled for further investigation as part of the regular development cycle.
+
+\subsection{DRP-00-25}
+\label{sect:detail-drp-00-25}
+
+The input dataset and analysis tools used for this test case were the same as for DRP-00-15 (see \S\ref{sect:detail-drp-00-15}).
+
+The test team agreed that:
+
 \begin{itemize}
-\item A description of the problem that occurred
-\item Identification of the test procedure step in which it occurred
-\item Reference to the Mantis issue
-\item The number of times the procedure or step was repeated in attempting to correct the problem and the outcome of each attempt (if applicable)
-\item Test steps where tests were resumed for retesting (if applicable)
+
+  \item{PSF models correctly predict the ellipticities of stars over the field of view.}
+  \item{Photometric and astrometric measurements are consistent with reference catalogs.}
+  \item{Forced and unforced measurements are consistent.}
+  \item{The slope of the stellar locus appears appropriate.}
+
 \end{itemize}
 
-\paragraph{[DRP-00-05]}
+However, aperture corrections were not found to be consistent between photometry algorithms when performing forced measurement.
+This inconsistency was outside acceptable tolerances, and has been ticketed for further investigation as \jira{DM-13058}.
+
+This test case is regarded as ``partially passed'': its overall goal has been accomplished, but understanding the origin of the inconsistent aperture corrections will require further work which will be undertaken during the upcoming developing cycle.
+
+\subsection{DRP-00-30}
+\label{sect:detail-drp-00-30}
+
+The input dataset used for this test case was the same as for DRP-00-15 (see \S\ref{sect:detail-drp-00-15}).
+
+The test was carried out as described.
+All required artifacts were accessible.
+Data was inspected by the Data Release Production Science Lead, who certified that artifacts were correctly matched and that backgrounds were not over-subtracted.
+
+This test case is therefore successfully passed.
+
+\subsection{DRP-00-35}
+\label{sect:detail-drp-00-35}
+
+The input dataset used for this test case was the same as for DRP-00-15 (see \S\ref{sect:detail-drp-00-15}).
+
+The test was carried out as described.
+All required artifacts were accessible.
+Data was inspected by the Data Release Production Science Lead, who certified that artifacts were correctly matched, satellite trails and ghosts were properly rejected, and that backgrounds were not over-subtracted.
+
+It was noted that:
+
 \begin{itemize}
-\item
-\begin{note}
-Data Facility to provide content.
-\end{note}
+
+  \item{We note that the background model is stored separately from the image, but is readily accessible;}
+  \item{
+    Pixels marked as contaminated by cosmic rays that had been successfully interpolated were not being included in the coadd, unnecessarily making much of the coadd unusable for precision science.
+    This issue had already been identified and ticketed as \jira{DM-9953}; it has subsequently been resolved.
+  }
+
 \end{itemize}
 
-\subsubsection{Deviations from test cases/procedures}
-\paragraph{[TEST-CASE-ID]}
-This paragraph shall identify by their unique identification, the test cases in which one or more deviations occured and shall provide:
+This test case is therefore successfully passed.
+
+\section{Problems encountered}
+
+\subsection{DRP-00-00}
+\label{sect:problems-drp-00-00}
+
+Per \S\ref{sect:swconf}, the initial attempt to execute this test case was based on the \texttt{devtoolset-6} toolchain, as is current LSST best practice.
+However, although the code executed without error, the numerical values recorded did not fall within the expected tolerances.
+This is due to a known compatibility issue between the version 14.0 release of the Pipelines and \texttt{devtoolset-6} which was fixed on \jira{DM-10902}.
+The test was repeated without \texttt{devtoolset-6} enabled and was then completed successfully.
+
+\subsection{DRP-00-05}
+\label{sect:problems-drp-00-05}
+
 \begin{itemize}
-\item A description of the deviation (e.g. substitution of any resource, procedural step not followed, scchedule deviation, etc)
-\item The rationale of the deviation
-\item An assessment of the deviation impact on the validity of the test case
+
+  \item{
+    During execution, several processing attempts failed due to unstable GPFS availability resulted from hardware problems and network issues.
+    We retried the attempts after the transient problems were resolved, following the Test Specifications.
+    The Data Facility's Network Group replaced the broken routers and purchased a hot spare.
+  }
+
+  \item{
+    The scratch filesystem, where the prototype DBB stores the files, was close to full several times during test execution.
+	We had to manually purge files to ensure sufficient space for the execution.
+  }
+
+  \item{
+    The Verification Cluster can be very busy making it difficult to acquire nodes to do the test work (both initial configuration test and actual full test).
+        A production reservation was added to Slurm to support the test execution.
+  }
+
+  \item{
+    We needed to apply a patch on top of the Stack release to workaround the issue that commas are part of the data IDs; this has been a known problem as discussed in \jira{RFC-361}.
+	The fix has been agreed in RFC-365 for future implementation in \jira{DM-11874}, \jira{DM-11875}, and \jira{DM-11876}.
+  }
+
+  \item{
+    The current implementation of the “Data Butler” I/O abstraction in the DM Stack is hard to adapt to file-based production data management systems that do not utilize a single global filesystem, for example the production DES Data Management System used for the Data Backbone and Batch Processing Service in this test.
+    This caused lengthy integration issues and fragility in the system design.
+    It is expected that future work on the DM middleware will resolve these concerns (\citeds{LDM-556}).
+  }
 \end{itemize}
 
-\paragraph{[DRP-00-05]}
+\subsection{DRP-00-10}
+\label{sect:problems-drp-00-10}
+
+An initial attempt was made to execute this test case based on the week 46 reprocessing of the Hyper Suprime-Cam ``RC'' dataset\footnote{Refer to \jira{DM-12811} and \url{https://confluence.lsstcorp.org/display/DM/Reprocessing+of+the+HSC+RC+dataset}.}.
+However an (independently discovered) bug in the version of the code used to process this data rendered it unusable for these tests.
+The bug was captured as \jira{DM-12882} and has subsequently been resolved.
+For the purpose of executing this test case (and others which depend upon in), the week 44 reprocessing\footnote{See \jira{DM-12388}.} was used instead.
+
+\subsection{DRP-00-15}
+\label{sect:problems-drp-00-15}
+
+None.
+
+\subsection{DRP-00-25}
+\label{sect:problems-drp-00-25}
+
+None.
+
+\subsection{DRP-00-30}
+\label{sect:problems-drp-00-30}
+
+None.
+
+\subsection{DRP-00-35}
+\label{sect:problems-drp-00-35}
+
+None.
+
+\section{Deviations from test cases/procedures}
+
+\subsection{DRP-00-00}
+
+None.
+
+\subsection{DRP-00-05}
+\label{sect:deviation-drp-00-05}
+
 \begin{itemize}
-\item
-\begin{note}
-Data Facility to provide content.
-\end{note}
+  \item{
+    For the first processing attempts of tracts 8766 and 8767, there was a misconfiguration which executed both attempts on the same set of worker nodes simultaneously.
+    This does not match the procedure in the Test Specification.
+    While tract 8766 finished successfully, it took longer wall-clock time than expected.
+    Because it produced expected outputs, tract 8766 was not rerun.
+    The first attempt of tract 8767 failed due to a network problem, and the time reported in Table \ref{tab:runtime} is the result of a new attempt (based on the Test Specification regarding resubmission of intermittent infrastructure problems) configured correctly using non-shared nodes.
+    Thus, the wall-clock time for tract 8767 in Table \ref{tab:runtime} is closer to the expected
+	time.
+  }
 \end{itemize}
 
-\newpage
+\subsection{DRP-00-10}
 
-\section{Test Review Board Declaration\label{sect:trb}}
-This section must be filled only if the test campaign has a  formal
-test review board.
-After the tests are executed and the test team circulates a draft of
-this document the TRB meets to declare the completion of the test campaign.
-This section must contain this declaration and the pass of fail status
-of the tests after completion (in case of failing it should also account
-for the actions taken - Mantis issues, etc.)
+None.
 
-\newpage
+\subsection{DRP-00-15}
+
+None.
+
+\subsection{DRP-00-25}
+
+None.
+
+\subsection{DRP-00-30}
+
+None.
+
+\subsection{DRP-00-35}
+
+None.
 
 \appendix
-\section{ANNEX A: Unit Tests \label{sect:unit_tests}}
-Description of the unit test coverage given by Cobertura
 
 \newpage
-\section{ANNEX B: Patch releases verification}
 
-{\it describe here the test activities executed in order to garantee the quality of the patch release}
+\section{Analysis of Bulk Data Processing}
 
-\subsubsection{Patch release C.M.n}
-
-Due to the small number issues fixed with the {\it \product} patch release {\it C.M.n} (very short jira list)
-and due to the minimal changes applied to the software, the test campaign completed for the {\it \product} major
-release $C.M$ is still valid.
-
-All unit and integration tests are still running without problems.
-
-Following manual verification has been done:
-
-\begin{itemize}
-\item verification 1
-\item ...
-\end{itemize}
-
-No system test has been re-executed, but the fix has been verified with a specific run
-on {\it Enclave??} platform.
+\input{tableProductCounts}
+\input{tableRuntime}
+\input{tableRuntimeExec}
 
 \end{document}
