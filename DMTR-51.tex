@@ -429,10 +429,7 @@ The test was carried out as described.
 All required artifacts were accessible.
 Data was inspected by the Data Release Production Science Lead, who certified that artifacts were correctly matched and that backgrounds were not over-subtracted.
 
-This test case is passed.
-
-
-
+This test case is therefore successfully passed.
 
 \subsection{DRP-00-35}
 \label{sect:detail-drp-00-35}
@@ -455,9 +452,11 @@ It was noted that:
 
 \end{itemize}
 
-\subsubsection{Problems encountered}
+This test case is therefore successfully passed.
 
-\paragraph{DRP-00-00}
+\section{Problems encountered}
+
+\subsection{DRP-00-00}
 \label{sect:problems-drp-00-00}
 
 Per \S\ref{sect:swconf}, the initial attempt to execute this test case was based on the \texttt{devtoolset-6} toolchain, as is current LSST best practice.
@@ -465,7 +464,7 @@ However, although the code executed without error, the numerical values recorded
 This is due to a known compatibility issue between the version 14.0 release of the Pipelines and \texttt{devtoolset-6} which was fixed on \jira{DM-10902}.
 The test was repeated without \texttt{devtoolset-6} enabled and was then completed successfully.
 
-\paragraph{DRP-00-05}
+\subsection{DRP-00-05}
 \label{sect:problems-drp-00-05}
 
 \begin{itemize}
@@ -498,7 +497,7 @@ The test was repeated without \texttt{devtoolset-6} enabled and was then complet
   }
 \end{itemize}
 
-\paragraph{DRP-00-10}
+\subsection{DRP-00-10}
 \label{sect:problems-drp-00-10}
 
 An initial attempt was made to execute this test case based on the week 46 reprocessing of the Hyper Suprime-Cam ``RC'' dataset\footnote{Refer to \jira{DM-12811} and \url{https://confluence.lsstcorp.org/display/DM/Reprocessing+of+the+HSC+RC+dataset}.}.
@@ -506,33 +505,33 @@ However an (independently discovered) bug in the version of the code used to pro
 The bug was captured as \jira{DM-12882} and has subsequently been resolved.
 For the purpose of executing this test case (and others which depend upon in), the week 44 reprocessing\footnote{See \jira{DM-12388}.} was used instead.
 
-\paragraph{DRP-00-15}
+\subsection{DRP-00-15}
 \label{sect:problems-drp-00-15}
 
 None.
 
-\paragraph{DRP-00-25}
+\subsection{DRP-00-25}
 \label{sect:problems-drp-00-25}
 
 None.
 
-\paragraph{DRP-00-30}
+\subsection{DRP-00-30}
 \label{sect:problems-drp-00-30}
 
 None.
 
-\paragraph{DRP-00-35}
+\subsection{DRP-00-35}
 \label{sect:problems-drp-00-35}
 
 None.
 
-\subsubsection{Deviations from test cases/procedures}
+\section{Deviations from test cases/procedures}
 
-\paragraph{DRP-00-00}
+\subsection{DRP-00-00}
 
 None.
 
-\paragraph{DRP-00-05}
+\subsection{DRP-00-05}
 \label{sect:deviation-drp-00-05}
 
 \begin{itemize}
@@ -547,23 +546,23 @@ None.
   }
 \end{itemize}
 
-\paragraph{DRP-00-10}
+\subsection{DRP-00-10}
 
 None.
 
-\paragraph{DRP-00-15}
+\subsection{DRP-00-15}
 
 None.
 
-\paragraph{DRP-00-25}
+\subsection{DRP-00-25}
 
 None.
 
-\paragraph{DRP-00-30}
+\subsection{DRP-00-30}
 
 None.
 
-\paragraph{DRP-00-35}
+\subsection{DRP-00-35}
 
 None.
 
