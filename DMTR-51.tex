@@ -19,15 +19,16 @@
   Michelle Gower,
   Mikolaj Kowalik,
   Timothy Morton,
-  John D. Swinbank
+  John D.\ Swinbank
 }
 
 % Most recent last
 \setDocChangeRecord{
-\addtohist{1}{2017-12-XX}{Initial version.}{Swinbank.}
+\addtohist{1}{2018-01-11}{Initial version.}{Bosch, Chiang, Gower, Kowalik, Morton, Swinbank.}
+\addtohist{1.1}{2018-01-11}{Implementation of \jira{RFC-425}}{T.~Jenness}
 }
 
-\setDocCurator{John D. Swinbank}
+\setDocCurator{John D.\ Swinbank}
 \setDocUpstreamLocation{\url{https://github.com/lsst-dm/\lsstDocType-\lsstDocNum}}
 \setDocUpstreamVersion{\vcsrevision}
 
@@ -108,12 +109,7 @@ Section \ref{sect:overview} provides an overview of the test results, while Sect
 
 \subsection{Documents}
 
-This test report refers to the execution of tests DRP-00-00 through DRP-00-35 in \citeds{LDM-534}.
-
-\begin{note}
-At time of writing, LDM-534 has not been baselined, so a detailed version
-number is not available.
-\end{note}
+This test report refers to the execution of tests DRP-00-00 through DRP-00-35 in \citeds{LDM-534} version 3.1.
 
 \subsection{Hardware}
 \label{sect:hwconf}
@@ -426,7 +422,7 @@ This test case is regarded as ``partially passed'': its overall goal has been ac
 The input dataset used for this test case was the same as for DRP-00-15 (see \S\ref{sect:detail-drp-00-15}).
 
 The test was carried out as described.
-All required artifacts were accessible.
+All required data products were accessible.
 Data was inspected by the Data Release Production Science Lead, who certified that artifacts were correctly matched and that backgrounds were not over-subtracted.
 
 This test case is therefore successfully passed.
@@ -437,7 +433,7 @@ This test case is therefore successfully passed.
 The input dataset used for this test case was the same as for DRP-00-15 (see \S\ref{sect:detail-drp-00-15}).
 
 The test was carried out as described.
-All required artifacts were accessible.
+All required data products were accessible.
 Data was inspected by the Data Release Production Science Lead, who certified that artifacts were correctly matched, satellite trails and ghosts were properly rejected, and that backgrounds were not over-subtracted.
 
 It was noted that:
